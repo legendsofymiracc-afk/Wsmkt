@@ -54,8 +54,8 @@ async function renderItemDetails(container) {
             <div class="item-details-info">
                 <h2>${item.nome}</h2>
                 <p><strong>Descrição:</strong> ${item.descricao || 'Sem descrição'}</p>
-                <p class="price-line"><span class="price-label">Preço:</span> <span class="price-value">${pCoins} moedas</span></p>
-                <p class="price-line"><span class="price-label">Preço R$:</span> <span class="price-value">${pBRL}</span></p>
+                <p class="price-line"><span class="price-icon game-coin" aria-hidden="true"></span><span class="price-label">Preço:</span> <span class="price-value">${pCoins} moedas</span></p>
+                <p class="price-line"><span class="price-icon brl-coin" aria-hidden="true"></span><span class="price-label">Preço R$:</span> <span class="price-value">${pBRL}</span></p>
                 ${sellerInfo}
                 <div class="purchase-actions"><button type="button" class="btn-whatsapp" onclick="whatsBuy(${item.id})"><span class="wa-icon" aria-hidden="true"></span>Comprar no WhatsApp</button></div>
                 <p class="stock-line"><strong>Quantidade:</strong> ${item.quantidade_disponivel}</p>
