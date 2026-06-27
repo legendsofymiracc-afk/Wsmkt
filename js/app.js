@@ -135,6 +135,9 @@ async function renderView() {
         case 'admin-panel':
             await renderAdminPanel(container);
             break;
+        case 'seller-panel':
+            await renderSellerPanel(container);
+            break;
         default:
             renderHome(container);
     }
