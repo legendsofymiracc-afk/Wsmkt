@@ -17,6 +17,7 @@ function getDB() {
         $db = new PDO('sqlite:' . DB_PATH);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $db->exec('PRAGMA journal_mode=WAL');
         return $db;
     } catch (PDOException $e) {
         die(json_encode(['error' => 'Erro ao conectar ao banco de dados: ' . $e->getMessage()]));
@@ -74,6 +75,44 @@ function initDB() {
         chave TEXT PRIMARY KEY,
         valor TEXT
     )');
+
+    // Tabela de usuários (dono + vendedores)
+    $db->exec('CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        senha_hash TEXT NOT NULL,
+        papel TEXT NOT NULL CHECK(papel IN ("dono","vendedor")),
+        nome TEXT NOT NULL,
+        whatsapp TEXT DEFAULT "",
+        ativo INTEGER DEFAULT 1,
+        senha_trocada INTEGER DEFAULT 0,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+    )');
+
+    // Coluna de vendedor nos itens
+    $info = $db->query('PRAGMA table_info(itens)')->fetchAll(PDO::FETCH_ASSOC);
+    $cols = array_column($info, 'name');
+    if (!in_array('id_vendedor', $cols)) {
+        $db->exec('ALTER TABLE itens ADD COLUMN id_vendedor INTEGER DEFAULT NULL');
+    }
+
+    // Email master padrão
+    $stmt = $db->prepare('INSERT OR IGNORE INTO configuracoes (chave, valor) VALUES (?, ?)');
+    $stmt->execute(['email_master', 'admin@mercado.com']);
+
+    // Migrar admin existente para tabela usuarios
+    $hasUsers = $db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
+    if ($hasUsers == 0) {
+        $emailMaster = getSetting('email_master', 'admin@mercado.com');
+        // Verifica se já existe hash salvo nas configurações
+        $existingHash = getSetting('admin_password_hash', '');
+        if (!$existingHash) {
+            // Usa a senha padrão
+            $existingHash = password_hash(ADMIN_PASSWORD, PASSWORD_DEFAULT);
+        }
+        $stmt = $db->prepare('INSERT INTO usuarios (email, senha_hash, papel, nome, whatsapp, ativo, senha_trocada) VALUES (?, ?, ?, ?, ?, 1, 1)');
+        $stmt->execute([$emailMaster, $existingHash, 'dono', 'Administrador', '']);
+    }
 
     // Garante configuração padrão da cantoneira
     $stmt = $db->prepare('INSERT OR IGNORE INTO configuracoes (chave, valor) VALUES (?, ?)');
@@ -186,18 +225,30 @@ function maybeMigrateLegacyData(PDO $db): void {
     }
 }
 
+// Senha do admin (em produção, use hash)
+define('ADMIN_PASSWORD', 'admin123');
+
 // Inicializar banco ao incluir este arquivo
 initDB();
 
 // Configuração de sessão para admin
 session_start();
 
-// Senha do admin (em produção, use hash)
-define('ADMIN_PASSWORD', 'admin123');
-
 // Verificar se está autenticado
 function isAdmin() {
     return isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
+}
+
+function isSeller(): bool {
+    return isset($_SESSION['usuario_papel']) && $_SESSION['usuario_papel'] === 'vendedor';
+}
+
+function isLoggedIn(): bool {
+    return isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] > 0;
+}
+
+function getCurrentUserId(): int {
+    return isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : 0;
 }
 
 function getSetting($key, $default = null) {
