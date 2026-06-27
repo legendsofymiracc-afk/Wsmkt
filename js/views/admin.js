@@ -352,7 +352,7 @@ function fillSelect(select, items, placeholder) {
     if (!select) return;
     const options = [`<option value="0">${placeholder}</option>`];
     items.forEach(item => {
-        options.push(`<option value="${item.id}">${item.nome}</option>`);
+        options.push(`<option value="${item.id}">${escapeHtml(item.nome)}</option>`);
     });
     select.innerHTML = options.join('');
 }
@@ -378,9 +378,9 @@ function renderAdminItemsList(container, generalId, categoryId, subcategoryId, t
         const priceBRL = formatCurrencyBRL(resolveBRLValue(item));
         return `
             <div class="admin-row">
-                <img class="thumb" src="${resolveImage(item.imagem_url)}" alt="${item.nome}">
+                <img class="thumb" src="${resolveImage(item.imagem_url)}" alt="${escapeHtml(item.nome)}">
                 <div>
-                    <div class="title">${item.nome}</div>
+                    <div class="title">${escapeHtml(item.nome)}</div>
                     <div class="subtitle">${priceCoins} moedas • ${priceBRL}</div>
                     <div class="subtitle">Subcategoria: ${item.subcategoria_nome || 'N/A'} • Quantidade: ${item.quantidade_disponivel}</div>
                 </div>
@@ -482,8 +482,8 @@ async function openItemForm(itemId = null) {
         <div class="form-row"><label>Categoria Geral</label><select id="form-general">${generalOptions}</select></div>
         <div class="form-row" id="row-category" style="${categoriesForGeneral.length ? '' : 'display:none;'}"><label>Categoria</label><select id="form-category">${categoryOptions}</select></div>
         <div class="form-row" id="row-subcategory" style="${subcategoriesForCategory.length ? '' : 'display:none;'}"><label>Subcategoria</label><select id="form-subcategory">${subcategoryOptions}</select></div>
-        <div class="form-row"><label>Nome</label><input type="text" id="form-name" value="${item ? item.nome : ''}"></div>
-        <div class="form-row"><label>Descrição</label><textarea id="form-description">${item ? (item.descricao || '') : ''}</textarea></div>
+        <div class="form-row"><label>Nome</label><input type="text" id="form-name" value="${item ? escapeHtml(item.nome) : ''}"></div>
+        <div class="form-row"><label>Descrição</label><textarea id="form-description">${item ? escapeHtml(item.descricao || '') : ''}</textarea></div>
         <div class="form-row"><label>Preço (moedas)</label><input type="number" min="0" id="form-price-coins" value="${item ? item.preco_moedas : 0}"></div>
         <div class="form-row"><label>Preço em R$</label><input type="number" step="0.01" min="0" id="form-price-brl" value="${item ? item.preco_reais : 0}"></div>
         <div class="form-row"><label>Quantidade</label><input type="number" min="0" id="form-quantity" value="${item ? item.quantidade_disponivel : 0}"></div>
@@ -698,9 +698,9 @@ async function openSellerForm(sellerId = null) {
     }
     renderModal(`
         <h2>${seller ? 'Editar Vendedor' : 'Novo Vendedor'}</h2>
-        <div class="form-row"><label>Nome</label><input type="text" id="sf-name" value="${seller ? seller.nome : ''}"></div>
-        <div class="form-row"><label>Email</label><input type="email" id="sf-email" value="${seller ? seller.email : ''}"></div>
-        <div class="form-row"><label>WhatsApp</label><input type="text" id="sf-whatsapp" value="${seller ? seller.whatsapp : ''}" placeholder="5511999999999"></div>
+        <div class="form-row"><label>Nome</label><input type="text" id="sf-name" value="${seller ? escapeHtml(seller.nome) : ''}"></div>
+        <div class="form-row"><label>Email</label><input type="email" id="sf-email" value="${seller ? escapeHtml(seller.email) : ''}"></div>
+        <div class="form-row"><label>WhatsApp</label><input type="text" id="sf-whatsapp" value="${seller ? escapeHtml(seller.whatsapp) : ''}" placeholder="5511999999999"></div>
         <div class="form-row"><label>${seller ? 'Nova senha (deixe em branco para manter)' : 'Senha inicial'}</label><input type="password" id="sf-password" placeholder="${seller ? '••••••' : 'Mínimo 6 caracteres'}"></div>
         <div class="form-actions"><button class="btn cancel" onclick="closeModal()">Cancelar</button><button class="btn" id="sf-submit">${seller ? 'Salvar' : 'Criar'}</button></div>
     `);

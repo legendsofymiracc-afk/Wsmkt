@@ -1,10 +1,4 @@
 // js/views/seller.js
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str || '';
-    return div.innerHTML;
-}
-
 async function loadSellerItems() {
     try {
         const data = await fetchJSON(`items.php?seller_id=${APP_STATE.currentUser.id}`);

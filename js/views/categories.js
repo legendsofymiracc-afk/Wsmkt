@@ -92,8 +92,8 @@ async function renderGeneralCategories(container) {
     if (!APP_STATE.allItems.length) await loadAllItems();
     const html = APP_STATE.generalCategories.map(cat => `
         <div class="row" onclick="selectGeneralCategory(${cat.id})" tabindex="0">
-            <div class="icon-wrapper"><img class="icon" src="${resolveImage(cat.imagem_url)}" alt="${cat.nome}"><span class="count-badge">${countItemsGeneral(cat)}</span></div>
-            <div class="label">${cat.nome}</div>
+            <div class="icon-wrapper"><img class="icon" src="${resolveImage(cat.imagem_url)}" alt="${escapeHtml(cat.nome)}"><span class="count-badge">${countItemsGeneral(cat)}</span></div>
+            <div class="label">${escapeHtml(cat.nome)}</div>
         </div>`).join('') || '<div class="row"><div class="label">Nenhuma categoria cadastrada.</div></div>';
     container.innerHTML = renderPanel('Catálogo', html, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
     addRowSelectionBehavior();
@@ -108,9 +108,9 @@ async function renderCategories(container) {
     const rootItems = APP_STATE.allItems.filter(it => (it.geral_id === general.id || it.id_geral === general.id) && !it.categoria_id && it.id_subcategoria === 0);
     const rows = [
         ...(rootItems.length ? [`<div class="row" onclick="selectGeneralRootItems(${general.id})" tabindex="0"><div class="icon-wrapper"><img class="icon" src="${resolveImage(general.imagem_url)}" alt="Itens"><span class="count-badge">${rootItems.length}</span></div><div class="label">Itens sem categoria</div></div>`] : []),
-        ...categories.map(cat => `<div class="row" onclick="selectCategory(${cat.id})" tabindex="0"><div class="icon-wrapper"><img class="icon" src="${resolveImage(cat.imagem_url)}" alt="${cat.nome}"><span class="count-badge">${countItemsCategory(cat)}</span></div><div class="label">${cat.nome}</div></div>`)
+        ...categories.map(cat => `<div class="row" onclick="selectCategory(${cat.id})" tabindex="0"><div class="icon-wrapper"><img class="icon" src="${resolveImage(cat.imagem_url)}" alt="${escapeHtml(cat.nome)}"><span class="count-badge">${countItemsCategory(cat)}</span></div><div class="label">${escapeHtml(cat.nome)}</div></div>`)
     ].join('') || '<div class="row"><div class="label">Nenhuma categoria disponível.</div></div>';
-    container.innerHTML = renderPanel(general.nome, rows, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
+    container.innerHTML = renderPanel(escapeHtml(general.nome), rows, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
     addRowSelectionBehavior();
 }
 
@@ -120,7 +120,7 @@ async function renderSubcategories(container) {
     const cat = APP_STATE.categoryIndex.get(APP_STATE.currentCategoryId);
     if (!cat) { navigateTo('categories'); return; }
     const subs = getSubcategoriesByCategory(cat.id);
-    const html = subs.map(sub => `<div class="row" onclick="selectSubcategory(${sub.id})" tabindex="0"><div class="icon-wrapper"><img class="icon" src="${resolveImage(sub.imagem_url)}" alt="${sub.nome}"><span class="count-badge">${countItemsForSub(sub.id)}</span></div><div class="label">${sub.nome}</div></div>`).join('') || '<div class="row"><div class="label">Nenhuma subcategoria disponível.</div></div>';
-    container.innerHTML = renderPanel(cat.nome, html, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
+    const html = subs.map(sub => `<div class="row" onclick="selectSubcategory(${sub.id})" tabindex="0"><div class="icon-wrapper"><img class="icon" src="${resolveImage(sub.imagem_url)}" alt="${escapeHtml(sub.nome)}"><span class="count-badge">${countItemsForSub(sub.id)}</span></div><div class="label">${escapeHtml(sub.nome)}</div></div>`).join('') || '<div class="row"><div class="label">Nenhuma subcategoria disponível.</div></div>';
+    container.innerHTML = renderPanel(escapeHtml(cat.nome), html, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
     addRowSelectionBehavior();
 }

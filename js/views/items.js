@@ -34,7 +34,7 @@ function renderItems(container) {
         const pCoins = item.preco_moedas || 0;
         const pBRL = formatCurrencyBRL(resolveBRLValue(item));
         const favClass = isFavorite(item.id) ? '❤️' : '🤍';
-        return `<div class="row" onclick="selectItem(${item.id})" tabindex="0"><span class="fav-icon" onclick="event.stopPropagation();toggleFavorite(${item.id});renderItems(document.getElementById('app'));">${favClass}</span><img class="icon" src="${resolveImage(item.imagem_url)}" alt="${item.nome}"><div class="label">${item.nome}<div style="font-size:12px;color:var(--gold);">${pCoins} moedas • ${pBRL}</div></div></div>`;
+        return `<div class="row" onclick="selectItem(${item.id})" tabindex="0"><span class="fav-icon" onclick="event.stopPropagation();toggleFavorite(${item.id});renderItems(document.getElementById('app'));">${favClass}</span><img class="icon" src="${resolveImage(item.imagem_url)}" alt="${escapeHtml(item.nome)}"><div class="label">${escapeHtml(item.nome)}<div style="font-size:12px;color:var(--gold);">${pCoins} moedas • ${pBRL}</div></div></div>`;
     }).join('') || '<div class="row"><div class="label">Nenhum item cadastrado.</div></div>';
     container.innerHTML = renderPanel(title, html, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
     addRowSelectionBehavior();
@@ -48,13 +48,13 @@ async function renderItemDetails(container) {
     if (!item) { showToast('Item não encontrado', 'error'); goBack(); return; }
     const pCoins = item.preco_moedas || 0;
     const pBRL = formatCurrencyBRL(resolveBRLValue(item));
-    const sellerInfo = item.nome_vendedor ? `<p><strong>Vendido por:</strong> ${item.nome_vendedor}</p>` : '';
-    container.innerHTML = renderPanel(item.nome, `
+    const sellerInfo = item.nome_vendedor ? `<p><strong>Vendido por:</strong> ${escapeHtml(item.nome_vendedor)}</p>` : '';
+    container.innerHTML = renderPanel(escapeHtml(item.nome), `
         <div class="item-details">
-            <div class="item-details-image"><img src="${resolveImage(item.imagem_url, CONFIG.PLACEHOLDER_IMAGE_200)}" alt="${item.nome}"></div>
+            <div class="item-details-image"><img src="${resolveImage(item.imagem_url, CONFIG.PLACEHOLDER_IMAGE_200)}" alt="${escapeHtml(item.nome)}"></div>
             <div class="item-details-info">
-                <h2>${item.nome}</h2>
-                <p><strong>Descrição:</strong> ${item.descricao || 'Sem descrição'}</p>
+                <h2>${escapeHtml(item.nome)}</h2>
+                <p><strong>Descrição:</strong> ${escapeHtml(item.descricao || 'Sem descrição')}</p>
                 <p class="price-line"><span class="price-icon game-coin" aria-hidden="true"></span><span class="price-label">Preço:</span> <span class="price-value">${pCoins} moedas</span></p>
                 <p class="price-line"><span class="price-icon brl-coin" aria-hidden="true"></span><span class="price-label">Preço R$:</span> <span class="price-value">${pBRL}</span></p>
                 ${sellerInfo}
@@ -65,7 +65,10 @@ async function renderItemDetails(container) {
 }
 
 function buildWhatsAppLink(item) {
-    const number = (APP_STATE.settings.whatsapp_number || '').replace(/\D+/g, '');
+    // Prefer seller's WhatsApp number, fall back to global admin number
+    const sellerNumber = (item.vendedor_whatsapp || '').replace(/\D+/g, '');
+    const globalNumber = (APP_STATE.settings.whatsapp_number || '').replace(/\D+/g, '');
+    const number = sellerNumber || globalNumber;
     if (!number) return null;
     const pBRL = formatCurrencyBRL(resolveBRLValue(item));
     const text = encodeURIComponent(`Olá! Tenho interesse no item "${item.nome}" por ${pBRL}. Ainda está disponível?`);

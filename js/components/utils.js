@@ -1,5 +1,11 @@
 // js/components/utils.js
 
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
 function sanitizeCategoriesTree(nodes) {
     if (!Array.isArray(nodes)) return [];
     return nodes.map(node => ({
@@ -21,6 +27,7 @@ function sanitizeItems(items) {
         id_geral: item.id_geral != null ? Number(item.id_geral) : 0,
         id_vendedor: item.id_vendedor != null ? Number(item.id_vendedor) : null,
         nome_vendedor: item.nome_vendedor || '',
+        vendedor_whatsapp: item.vendedor_whatsapp || '',
         nome: item.nome,
         descricao: item.descricao,
         preco_moedas: item.preco_moedas != null ? Number(item.preco_moedas) : 0,

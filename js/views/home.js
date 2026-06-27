@@ -18,7 +18,7 @@ function renderHome(container) {
            </div>`
         : '';
     const logoutBtn = isLoggedIn
-        ? `<button class="login-btn" onclick="doLogout()">SAIR (${APP_STATE.currentUser.nome})</button>`
+        ? `<button class="login-btn" onclick="doLogout()">SAIR (${escapeHtml(APP_STATE.currentUser.nome)})</button>`
         : `<button class="login-btn" onclick="window.close()">FECHAR</button>`;
 
     container.innerHTML = renderPanel('Mercado', `
