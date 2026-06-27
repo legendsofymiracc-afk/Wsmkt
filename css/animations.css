@@ -1,0 +1,81 @@
+/* =====================================================
+   ANIMAÇÕES
+   ===================================================== */
+
+/* Fade in para transições de view */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.panel {
+    animation: fadeIn 200ms ease-out;
+}
+
+/* Hover em cards de categoria */
+.row:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.row {
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+/* Ripple effect (ativado via JS) */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 215, 0, 0.4);
+    transform: scale(0);
+    animation: ripple 600ms ease-out;
+    pointer-events: none;
+}
+@keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* Toast slide-in */
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.toast {
+    animation: slideInRight 300ms ease-out;
+}
+
+/* Accordion chevron */
+.accordion-item summary .accordion-chevron {
+    display: inline-block;
+    transition: transform 200ms ease;
+}
+.accordion-item[open] summary .accordion-chevron {
+    transform: rotate(90deg);
+}
+
+/* Modal scale-in */
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.modal {
+    animation: scaleIn 200ms ease-out;
+}
+.modal-overlay {
+    animation: fadeIn 150ms ease-out;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+.skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+}

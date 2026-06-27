@@ -46,7 +46,8 @@ body {
                    calc(var(--img-h) * var(--tile-scale-body));
   image-rendering: pixelated;
   color: var(--gold);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
   display: flex; /* permite centralizar verticalmente no desktop e ajustar no mobile */
   align-items: center;
   justify-content: center;
@@ -120,7 +121,8 @@ body {
 .title {
   margin: 0;
   text-align: center;
-  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-weight: 700;
   font-size: 26px;
   color: var(--gold);
 }
@@ -177,6 +179,23 @@ body {
   background: rgba(212, 175, 55, 0.8);
 }
 
+/* Scroll indicator */
+.list::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.list.has-scroll::after {
+  opacity: 1;
+}
+
 /* item padrão */
 .row {
   display: grid;
@@ -190,6 +209,7 @@ body {
   outline: none;
   cursor: pointer;
   position: relative; /* necessário para badge absoluta */
+  min-height: 56px;
 }
 
 /* item selecionado / hover */
@@ -209,7 +229,12 @@ body {
   display: block;
 }
 /* wrapper para ícone permitindo badge de contagem */
-.icon-wrapper { position:relative; width:64px; height:64px; }
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+}
 .icon-wrapper .icon { width:100%; height:100%; }
 
 /* texto das opções */
@@ -222,24 +247,17 @@ body {
 /* Badge de contagem (próximo nível) */
 .count-badge {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  min-width: 22px;
-  padding: 2px 4px 1px 4px;
-  box-sizing: border-box;
-  background: linear-gradient(#2e313b,#1a1d24 60%, #121418);
-  border: 1px solid #3f434d;
-  border-bottom-color: #272a30;
-  border-right-color: #272a30;
-  color: #ffffff;
+  top: -4px;
+  right: -8px;
+  background: #d46a2e;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 6px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
+  min-width: 18px;
   text-align: center;
-  line-height: 14px;
-  border-radius: 3px;
   pointer-events: none;
-  text-shadow: 0 1px 2px #000, 0 0 3px rgba(255,255,255,0.35);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07);
 }
 
 a {
@@ -345,7 +363,7 @@ a {
   font-size: 14px;
 }
 .price-label { font-weight: 700; }
-.price-value { font-weight: 600; }
+.price-value { font-weight: 600; color: #ffd700; }
 .price-icon {
   width: 20px;
   height: 20px;
@@ -810,6 +828,34 @@ a {
 .admin-item-actions {
   display: flex;
   gap: 8px;
+}
+
+/* =====================================================
+   📱 MOBILE NAV (rodapé fixo)
+   ===================================================== */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border-top: 2px solid #d4af37;
+  padding: 8px 16px;
+  z-index: 100;
+  justify-content: space-around;
+}
+.mobile-nav button {
+  background: transparent;
+  border: none;
+  color: #ffd700;
+  font-size: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .mobile-nav { display: flex; }
+  body { padding-bottom: 60px; }
 }
 
 /* =====================================================

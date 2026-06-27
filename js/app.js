@@ -32,6 +32,22 @@ async function initializeApp() {
     await checkAuth();
     ensureBackgroundTexture();
     renderView();
+
+    // Ripple effect em todos os botões
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        btn.classList.add('ripple');
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+        btn.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
 }
 
 async function loadSettings() {
@@ -140,6 +156,13 @@ async function renderView() {
             break;
         default:
             renderHome(container);
+    }
+
+    // Verificar scroll na lista após renderizar
+    const list = document.querySelector('.list');
+    if (list) {
+        const hasScroll = list.scrollHeight > list.clientHeight;
+        list.classList.toggle('has-scroll', hasScroll);
     }
 }
 
