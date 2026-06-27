@@ -47,6 +47,14 @@ if (!isset($allowed[$mime])) {
     exit();
 }
 
+// Rejeitar extensão dupla
+$originalName = strtolower($file['name']);
+if (substr_count($originalName, '.') > 1) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Nome de arquivo inválido']);
+    exit();
+}
+
 $ext = $allowed[$mime];
 $uploadsDir = __DIR__ . '/../images/uploads';
 if (!is_dir($uploadsDir)) {

@@ -19,8 +19,24 @@ function resolveApiBase() {
     return 'api';
 }
 
+let csrfToken = '';
+async function getCsrfToken() {
+    if (csrfToken) return csrfToken;
+    try {
+        const data = await fetch(`${CONFIG.API_URL}/auth.php?action=csrf`, { credentials: 'same-origin' });
+        const json = await data.json();
+        csrfToken = json.csrf_token;
+    } catch (_) {}
+    return csrfToken;
+}
+
 async function fetchJSON(endpoint, options = {}) {
     const init = { credentials: 'same-origin', ...options };
+    if (!init.headers) init.headers = {};
+    if (['POST', 'PUT', 'DELETE'].includes(init.method || 'GET')) {
+        const token = await getCsrfToken();
+        if (token) init.headers['X-CSRF-Token'] = token;
+    }
     const response = await fetch(`${CONFIG.API_URL}/${endpoint}`, init);
     const contentType = response.headers.get('content-type') || '';
     if (!response.ok) {

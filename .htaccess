@@ -1,0 +1,22 @@
+Options -Indexes
+
+# Bloquear acesso a arquivos sensíveis
+<FilesMatch "^(config\.php)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquear acesso direto ao diretório database
+RedirectMatch 403 ^/database/.*$
+
+# Forçar HTTPS (descomentar em produção)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>

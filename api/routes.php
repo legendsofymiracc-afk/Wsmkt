@@ -73,6 +73,15 @@ function sendSecurityHeaders(): void {
 checkRateLimit();
 sendSecurityHeaders();
 
+// Verificar CSRF em métodos que alteram estado
+if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
+    if (!verifyCsrfToken()) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Token CSRF inválido']);
+        exit();
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();

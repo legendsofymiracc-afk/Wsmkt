@@ -104,6 +104,10 @@ switch ($action) {
         ]);
         exit();
 
+    case 'csrf':
+        echo json_encode(['csrf_token' => generateCsrfToken()]);
+        exit();
+
     default:
         http_response_code(400);
         echo json_encode(['error' => 'Ação inválida']);
