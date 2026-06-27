@@ -184,11 +184,5 @@ async function promptDeleteSellerItem(itemId) {
         renderSellerItemsList(document.getElementById('seller-items-list'));
     } catch (e) { console.error(e); showToast(e.message || 'Erro ao excluir', 'error'); }
 }
-
-function fillSelect(select, items, placeholder) {
-    if (!select) return;
-    select.innerHTML = [`<option value="0">${placeholder}</option>`, ...items.map(i => `<option value="${i.id}">${i.nome}</option>`)].join('');
-}
-
 window.openSellerItemForm = openSellerItemForm;
 window.promptDeleteSellerItem = promptDeleteSellerItem;
