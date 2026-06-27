@@ -40,7 +40,15 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
     $sql .= ' ORDER BY i.id ASC';
 
     $stmt = $db->prepare($sql);
-    $stmt->execute($params);
+    // Bind params with explicit types to avoid string coercion in COALESCE comparisons
+    foreach ($params as $i => $param) {
+        if (is_int($param)) {
+            $stmt->bindValue($i + 1, $param, PDO::PARAM_INT);
+        } else {
+            $stmt->bindValue($i + 1, $param, PDO::PARAM_STR);
+        }
+    }
+    $stmt->execute();
     return $stmt->fetchAll();
 }
 
