@@ -33,7 +33,8 @@ function renderItems(container) {
     const html = APP_STATE.itemsList.map(item => {
         const pCoins = item.preco_moedas || 0;
         const pBRL = formatCurrencyBRL(resolveBRLValue(item));
-        return `<div class="row" onclick="selectItem(${item.id})" tabindex="0"><img class="icon" src="${resolveImage(item.imagem_url)}" alt="${item.nome}"><div class="label">${item.nome}<div style="font-size:12px;color:var(--gold);">${pCoins} moedas • ${pBRL}</div></div></div>`;
+        const favClass = isFavorite(item.id) ? '❤️' : '🤍';
+        return `<div class="row" onclick="selectItem(${item.id})" tabindex="0"><span class="fav-icon" onclick="event.stopPropagation();toggleFavorite(${item.id});renderItems(document.getElementById('app'));">${favClass}</span><img class="icon" src="${resolveImage(item.imagem_url)}" alt="${item.nome}"><div class="label">${item.nome}<div style="font-size:12px;color:var(--gold);">${pCoins} moedas • ${pBRL}</div></div></div>`;
     }).join('') || '<div class="row"><div class="label">Nenhum item cadastrado.</div></div>';
     container.innerHTML = renderPanel(title, html, '<button class="login-btn" onclick="goBack()">VOLTAR</button>');
     addRowSelectionBehavior();

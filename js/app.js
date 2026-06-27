@@ -33,6 +33,27 @@ async function initializeApp() {
     ensureBackgroundTexture();
     renderView();
 
+    // Mobile nav scroll hide/show
+    let lastScrollY = 0;
+    const mobileNav = document.getElementById('mobile-nav');
+    window.addEventListener('scroll', () => {
+        if (!mobileNav) return;
+        const currentScroll = window.scrollY;
+        if (currentScroll > lastScrollY && currentScroll > 100) {
+            mobileNav.style.transform = 'translateY(100%)';
+        } else {
+            mobileNav.style.transform = 'translateY(0)';
+        }
+        lastScrollY = currentScroll;
+    }, { passive: true });
+
+    // First-visit tooltip
+    const hasVisited = localStorage.getItem('has_visited');
+    if (!hasVisited) {
+        setTimeout(() => showToast('👋 Clique nas categorias para explorar itens!', 'info', 5000), 1000);
+        localStorage.setItem('has_visited', '1');
+    }
+
     // Ripple effect em todos os botões
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('button');
@@ -158,6 +179,10 @@ async function renderView() {
             renderHome(container);
     }
 
+    // Update page title
+    const titles = { home: 'Mercado Warspear', 'general-categories': 'Catálogo', items: 'Itens', 'item-details': 'Detalhes', 'admin-panel': 'Admin', 'seller-panel': 'Meus Anúncios' };
+    document.getElementById('page-title').textContent = (titles[APP_STATE.currentView] || 'Mercado') + ' — Mercado Warspear';
+
     // Verificar scroll na lista após renderizar
     requestAnimationFrame(() => {
         const list = document.querySelector('.list');
@@ -167,6 +192,23 @@ async function renderView() {
         }
     });
 }
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getFavorites() {
+    try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch { return []; }
+}
+function toggleFavorite(itemId) {
+    let favs = getFavorites();
+    const idx = favs.indexOf(itemId);
+    if (idx >= 0) { favs.splice(idx, 1); showToast('Removido dos favoritos', 'info'); }
+    else { favs.push(itemId); showToast('Adicionado aos favoritos ❤️', 'success'); }
+    localStorage.setItem('favorites', JSON.stringify(favs));
+    return favs;
+}
+function isFavorite(itemId) { return getFavorites().includes(itemId); }
 
 window.navigateTo = navigateTo;
 window.selectGeneralCategory = selectGeneralCategory;

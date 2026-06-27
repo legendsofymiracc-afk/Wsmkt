@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado - Catálogo Online</title>
+    <meta name="description" content="Mercado Warspear - Compre e venda itens do jogo">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Mercado Warspear">
+    <meta property="og:description" content="Catálogo de itens do Warspear Online">
+    <meta property="og:image" content="images/uploads/mercado.png">
+    <meta property="og:type" content="website">
+    <title id="page-title">Mercado Warspear</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css" media="print" onload="this.media='all'">
 </head>
 <body>
     <div id="app"></div>
+    <nav class="mobile-nav" id="mobile-nav">
+        <button onclick="navigateTo('home')" title="Home">🏠</button>
+        <button onclick="navigateTo('general-categories')" title="Categorias">📋</button>
+        <button onclick="scrollToTop()" title="Voltar ao topo">⬆️</button>
+    </nav>
     <script src="js/api.js" defer></script>
     <script src="js/components/utils.js" defer></script>
     <script src="js/components/toast.js" defer></script>
