@@ -3,7 +3,7 @@
    ===================================================== */
 :root {
   /* Textura base usada no fundo */
-  --bg-url: url("https://lh3.googleusercontent.com/pw/AP1GczPt_JNvlJ_mIKN8VZgLiicZ-EjSpipAvUYAzOfnJAyHrMdfOLlQMeTI706dVobcjGj4vdgJO2gldL_JXnfVTjvf7HQwsiTl3-tLXfjNilIlzrSWEoF4lkfmh6u0MWfhd_H6iNV9ftbRSPR-snyjlHAaqw=w1336-h1293-s-no-gm?authuser=0");
+  --bg-url: url("../images/fundo.png");
 
   /* Tamanho original da textura */
   --img-w: 1336px;
