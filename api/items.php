@@ -16,6 +16,7 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
                 i.preco_reais,
                 i.quantidade_disponivel,
                 i.imagem_url,
+                v.nome AS nome_vendedor,
                 sub.nome AS subcategoria_nome,
                 COALESCE(cat_explicit.id, cat_from_sub.id) AS categoria_id,
                 COALESCE(cat_explicit.nome, cat_from_sub.nome) AS categoria_nome,
@@ -27,7 +28,8 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
             LEFT JOIN categorias geral_from_sub ON geral_from_sub.id = cat_from_sub.id_pai
             LEFT JOIN categorias cat_explicit ON cat_explicit.id = i.id_categoria
             LEFT JOIN categorias geral_from_cat ON geral_from_cat.id = cat_explicit.id_pai
-            LEFT JOIN categorias geral_explicit ON geral_explicit.id = i.id_geral';
+            LEFT JOIN categorias geral_explicit ON geral_explicit.id = i.id_geral
+            LEFT JOIN usuarios v ON v.id = i.id_vendedor';
 
     if ($where) {
         $sql .= ' WHERE ' . $where;
