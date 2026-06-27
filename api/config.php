@@ -124,6 +124,24 @@ function initDB() {
         setSetting('corner_image_url', DEFAULT_CORNER_IMAGE);
     }
 
+    // Tabela de templates de equipamentos (para preenchimento rápido)
+    $db->exec('CREATE TABLE IF NOT EXISTS templates (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        item_id INTEGER DEFAULT 0,
+        categoria TEXT DEFAULT "",
+        subcategoria TEXT DEFAULT "",
+        imagem_url TEXT DEFAULT "",
+        atributos TEXT DEFAULT "{}",
+        nivel_min INTEGER DEFAULT 0,
+        nivel_max INTEGER DEFAULT 0,
+        profissao TEXT DEFAULT "",
+        rarity TEXT DEFAULT "",
+        origem TEXT DEFAULT ""
+    )');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_templates_nome ON templates(nome)');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_templates_item_id ON templates(item_id)');
+
     maybeMigrateLegacyData($db);
 }
 
