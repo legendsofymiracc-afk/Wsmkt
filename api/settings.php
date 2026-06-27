@@ -1,10 +1,10 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/routes.php';
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 // chaves suportadas no app
-$allowedKeys = ['corner_image_url', 'whatsapp_number']; // não inclui senha para não expor
+$allowedKeys = ['corner_image_url', 'whatsapp_number', 'email_master']; // não inclui senha para não expor
 
 switch ($method) {
     case 'GET':

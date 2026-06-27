@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/routes.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
@@ -47,6 +47,13 @@ switch ($method) {
         $categoryId = isset($_GET['category_id']) ? (int) $_GET['category_id'] : 0;
         $generalId = isset($_GET['general_id']) ? (int) $_GET['general_id'] : 0;
         $itemId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+        $sellerFilter = isset($_GET['seller_id']) ? (int) $_GET['seller_id'] : 0;
+
+        if ($sellerFilter > 0) {
+            $items = fetchItemsWithRelations($db, 'i.id_vendedor = ?', [$sellerFilter]);
+            echo json_encode($items);
+            break;
+        }
 
         if ($itemId > 0) {
             $items = fetchItemsWithRelations($db, 'i.id = ?', [$itemId]);
@@ -71,13 +78,18 @@ switch ($method) {
         break;
 
     case 'POST':
-        if (!isAdmin()) {
+        if (!isAdmin() && !isSeller()) {
             http_response_code(401);
             echo json_encode(['error' => 'Não autorizado']);
             exit();
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
+        // Se for vendedor (não admin), força id_vendedor = session user
+        if (isSeller() && !isAdmin()) {
+            $data['id_vendedor'] = getCurrentUserId();
+        }
+
         // Determina o nível mais profundo disponível
         $idSub = !empty($data['id_subcategoria']) ? (int)$data['id_subcategoria'] : null;
         $idCat = !empty($data['id_categoria']) ? (int)$data['id_categoria'] : null;
@@ -93,7 +105,7 @@ switch ($method) {
             exit();
         }
 
-        $stmt = $db->prepare('INSERT INTO itens (id_subcategoria, id_categoria, id_geral, nome, descricao, preco_moedas, preco_reais, quantidade_disponivel, imagem_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt = $db->prepare('INSERT INTO itens (id_subcategoria, id_categoria, id_geral, nome, descricao, preco_moedas, preco_reais, quantidade_disponivel, imagem_url, id_vendedor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $idSub,
             $idCat,
@@ -103,7 +115,8 @@ switch ($method) {
             isset($data['preco_moedas']) ? (int)$data['preco_moedas'] : 0,
             isset($data['preco_reais']) ? (float)$data['preco_reais'] : 0,
             isset($data['quantidade_disponivel']) ? (int)$data['quantidade_disponivel'] : 0,
-            $data['imagem_url'] ?? ''
+            $data['imagem_url'] ?? '',
+            isset($data['id_vendedor']) ? (int)$data['id_vendedor'] : null
         ]);
 
         echo json_encode([
@@ -113,7 +126,7 @@ switch ($method) {
         break;
 
     case 'PUT':
-        if (!isAdmin()) {
+        if (!isAdmin() && !isSeller()) {
             http_response_code(401);
             echo json_encode(['error' => 'Não autorizado']);
             exit();
@@ -121,6 +134,18 @@ switch ($method) {
 
         $data = json_decode(file_get_contents('php://input'), true);
         $id = $data['id'] ?? 0;
+
+        // Se vendedor, verificar se o item é dele
+        if (isSeller() && !isAdmin()) {
+            $check = $db->prepare('SELECT id_vendedor FROM itens WHERE id = ?');
+            $check->execute([$id]);
+            $owner = $check->fetchColumn();
+            if ($owner != getCurrentUserId()) {
+                http_response_code(403);
+                echo json_encode(['error' => 'Você só pode editar seus próprios itens']);
+                break;
+            }
+        }
 
         $idSub = !empty($data['id_subcategoria']) ? (int)$data['id_subcategoria'] : null;
         $idCat = !empty($data['id_categoria']) ? (int)$data['id_categoria'] : null;
@@ -152,7 +177,7 @@ switch ($method) {
         break;
 
     case 'DELETE':
-        if (!isAdmin()) {
+        if (!isAdmin() && !isSeller()) {
             http_response_code(401);
             echo json_encode(['error' => 'Não autorizado']);
             exit();
@@ -160,6 +185,18 @@ switch ($method) {
 
         $data = json_decode(file_get_contents('php://input'), true);
         $id = $data['id'] ?? 0;
+
+        // Se vendedor, verificar se o item é dele
+        if (isSeller() && !isAdmin()) {
+            $check = $db->prepare('SELECT id_vendedor FROM itens WHERE id = ?');
+            $check->execute([$id]);
+            $owner = $check->fetchColumn();
+            if ($owner != getCurrentUserId()) {
+                http_response_code(403);
+                echo json_encode(['error' => 'Você só pode excluir seus próprios itens']);
+                break;
+            }
+        }
 
         $stmt = $db->prepare('DELETE FROM itens WHERE id = ?');
         $stmt->execute([$id]);

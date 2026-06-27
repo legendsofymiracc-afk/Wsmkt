@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/routes.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();

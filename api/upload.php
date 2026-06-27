@@ -1,12 +1,12 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/routes.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-if (!isAdmin()) {
+if (!isAdmin() && !isSeller()) {
     http_response_code(401);
     echo json_encode(['error' => 'Não autorizado']);
     exit();
