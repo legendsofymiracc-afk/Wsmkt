@@ -11,36 +11,36 @@ function checkRateLimit(): void {
     $maxRequests = 30;
 
     $db = getDB();
-    // Criar tabela de rate limit se não existir
     $db->exec('CREATE TABLE IF NOT EXISTS rate_limits (
         chave TEXT PRIMARY KEY,
         contagem INTEGER DEFAULT 0,
         janela_inicio INTEGER DEFAULT 0
     )');
 
-    $stmt = $db->prepare('SELECT contagem, janela_inicio FROM rate_limits WHERE chave = ?');
-    $stmt->execute([$key]);
-    $row = $stmt->fetch();
+    $db->beginTransaction();
+    try {
+        // Upsert com reset se janela expirou
+        $stmt = $db->prepare('INSERT INTO rate_limits (chave, contagem, janela_inicio) VALUES (?, 1, ?)
+            ON CONFLICT(chave) DO UPDATE SET
+                contagem = CASE WHEN janela_inicio < ? THEN 1 ELSE contagem + 1 END,
+                janela_inicio = CASE WHEN janela_inicio < ? THEN ? ELSE janela_inicio END');
+        $stmt->execute([$key, $now, $now - $window, $now - $window, $now]);
 
-    if ($row) {
-        $count = (int) $row['contagem'];
-        $windowStart = (int) $row['janela_inicio'];
-        if ($now - $windowStart > $window) {
-            $count = 1;
-            $windowStart = $now;
-        } else {
-            $count++;
-        }
+        // Lê a contagem atual
+        $stmt = $db->prepare('SELECT contagem FROM rate_limits WHERE chave = ?');
+        $stmt->execute([$key]);
+        $count = (int) $stmt->fetchColumn();
+
+        $db->commit();
+
         if ($count > $maxRequests) {
             http_response_code(429);
             echo json_encode(['error' => 'Muitas requisições. Aguarde.']);
             exit();
         }
-        $stmt = $db->prepare('UPDATE rate_limits SET contagem = ?, janela_inicio = ? WHERE chave = ?');
-        $stmt->execute([$count, $windowStart, $key]);
-    } else {
-        $stmt = $db->prepare('INSERT INTO rate_limits (chave, contagem, janela_inicio) VALUES (?, 1, ?)');
-        $stmt->execute([$key, $now]);
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        // Falha no rate limit não bloqueia a requisição
     }
 }
 

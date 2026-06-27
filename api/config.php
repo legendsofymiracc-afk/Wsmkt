@@ -231,6 +231,18 @@ define('ADMIN_PASSWORD', 'admin123');
 // Inicializar banco ao incluir este arquivo
 initDB();
 
+// Headers para JSON (fallback para endpoints que ainda não usam routes.php)
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
+
+// Tratar OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // Configuração de sessão para admin
 session_start();
 
@@ -269,10 +281,5 @@ function setSetting($key, $value) {
     $stmt->execute();
 }
 
-// Headers para JSON
-header('Content-Type: application/json; charset=utf-8');
-
-// Headers de CORS e proteções agora via routes.php
-// Incluir routes.php no início de cada endpoint
 ?>
 
