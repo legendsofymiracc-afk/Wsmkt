@@ -1,4 +1,10 @@
 // js/views/seller.js
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
 async function loadSellerItems() {
     try {
         const data = await fetchJSON(`items.php?seller_id=${APP_STATE.currentUser.id}`);
@@ -25,9 +31,9 @@ function renderSellerItemsList(container, term = '') {
         const catPath = [item.geral_nome, item.categoria_nome, item.subcategoria_nome].filter(Boolean).join(' › ');
         return `
             <div class="admin-row">
-                <img class="thumb" src="${resolveImage(item.imagem_url)}" alt="${item.nome}">
+                <img class="thumb" src="${resolveImage(item.imagem_url)}" alt="${escapeHtml(item.nome)}">
                 <div>
-                    <div class="title">${item.nome}</div>
+                    <div class="title">${escapeHtml(item.nome)}</div>
                     <div class="subtitle">${pCoins} moedas • ${pBRL}</div>
                     <div class="subtitle">${catPath || 'Sem categoria'}</div>
                 </div>
@@ -101,13 +107,15 @@ async function openSellerItemForm(itemId = null) {
         <div class="form-row" id="sf-row-cat" style="${catsForGeneral.length ? '' : 'display:none;'}"><label>Categoria</label><select id="sf-category">${catOpts}</select></div>
         <div class="form-row" id="sf-row-sub" style="${subsForCat.length ? '' : 'display:none;'}"><label>Subcategoria</label><select id="sf-subcategory">${subOpts}</select></div>
         <div class="form-row"><label>Nome</label><input type="text" id="sf-name" value="${item ? item.nome : ''}"></div>
-        <div class="form-row"><label>Descrição</label><textarea id="sf-desc">${item ? (item.descricao || '') : ''}</textarea></div>
+        <div class="form-row"><label>Descrição</label><textarea id="sf-desc"></textarea></div>
         <div class="form-row"><label>Preço (moedas)</label><input type="number" min="0" id="sf-coins" value="${item ? item.preco_moedas : 0}"></div>
         <div class="form-row"><label>Preço em R$</label><input type="number" step="0.01" min="0" id="sf-brl" value="${item ? item.preco_reais : 0}"></div>
         <div class="form-row"><label>Quantidade</label><input type="number" min="0" id="sf-qty" value="${item ? item.quantidade_disponivel : 0}"></div>
         <div class="form-row"><label>Imagem</label><input type="file" accept="image/*" id="sf-image"></div>
         <div class="form-actions"><button class="btn cancel" onclick="closeModal()">Cancelar</button><button class="btn" id="sf-submit">${item ? 'Salvar' : 'Criar'}</button></div>
     `);
+
+    document.getElementById('sf-desc').value = item ? (item.descricao || '') : '';
 
     const genSel = document.getElementById('sf-general');
     const catSel = document.getElementById('sf-category');
