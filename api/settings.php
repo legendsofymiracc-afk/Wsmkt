@@ -39,6 +39,11 @@ switch ($method) {
                 break;
             }
             $hash = password_hash($newPass, PASSWORD_DEFAULT);
+            // Atualizar também na tabela usuarios (nova estrutura)
+            $db = getDB();
+            $stmt = $db->prepare("UPDATE usuarios SET senha_hash = ?, senha_trocada = 1 WHERE papel = 'dono' LIMIT 1");
+            $stmt->execute([$hash]);
+            // Mantém compatibilidade com código antigo
             setSetting('admin_password_hash', $hash);
         }
 
