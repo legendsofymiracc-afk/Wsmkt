@@ -33,16 +33,18 @@ async function doLogin() {
         return;
     }
     try {
+        const token = await getCsrfToken();
         const body = new URLSearchParams({ email, password }).toString();
         let response = await fetch(`${CONFIG.API_URL}/auth.php?action=login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', ...(token ? { 'X-CSRF-Token': token } : {}) },
             credentials: 'same-origin',
             body
         });
         if (response.status === 405) {
             response = await fetch(`${CONFIG.API_URL}/auth.php?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
                 method: 'GET',
+                headers: token ? { 'X-CSRF-Token': token } : {},
                 credentials: 'same-origin'
             });
         }

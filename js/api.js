@@ -67,9 +67,11 @@ function resolveImage(url, fallback = CONFIG.PLACEHOLDER_IMAGE_64) {
 async function uploadImage(file) {
     const maxBytes = 2 * 1024 * 1024;
     if (file.size > maxBytes) throw new Error('Imagem excede 2MB');
+    const token = await getCsrfToken();
     const formData = new FormData();
     formData.append('file', file);
-    const response = await fetch(`${CONFIG.API_URL}/upload.php`, { method: 'POST', body: formData });
+    const headers = token ? { 'X-CSRF-Token': token } : {};
+    const response = await fetch(`${CONFIG.API_URL}/upload.php`, { method: 'POST', headers, body: formData });
     const data = await response.json();
     if (!data.success) throw new Error(data.error || 'Falha no upload');
     return data.path;
