@@ -1,14 +1,9 @@
-const CONFIG = {
-    API_URL: 'api',
-    COIN_TO_BRL: 0.01,
-    DEFAULT_CORNER_IMAGE: 'images/cantoneira.png',
-    PLACEHOLDER_IMAGE_64: 'https://via.placeholder.com/64',
-    PLACEHOLDER_IMAGE_200: 'https://via.placeholder.com/200'
-};
-
 const APP_STATE = {
     currentView: 'home',
-    isAdmin: false,
+    currentUser: { id: null, nome: null, papel: null, isLoggedIn: false },
+    // Compatibilidade com código existente
+    get isAdmin() { return this.currentUser.papel === 'dono'; },
+    set isAdmin(v) { /* mantido por compatibilidade */ },
     currentGeneralId: null,
     currentCategoryId: null,
     currentSubcategoryId: null,
@@ -38,21 +33,6 @@ function updateViewportUnit() {
 window.addEventListener('resize', updateViewportUnit);
 updateViewportUnit();
 
-function resolveApiBase() {
-    try {
-        const override = localStorage.getItem('API_BASE');
-        if (override && override.trim()) return override.trim().replace(/\/$/, '');
-    } catch (_) {}
-
-    const origin = (window.location.origin || '').toLowerCase();
-    const isLiveServer = origin.includes('127.0.0.1:5500') || origin.includes('localhost:5500');
-    const isFile = window.location.protocol === 'file:';
-    if (isLiveServer || isFile) {
-        return 'http://127.0.0.1:8080/api';
-    }
-    return 'api';
-}
-
 async function initializeApp() {
     // Ajusta dinamicamente a base da API conforme o ambiente
     CONFIG.API_URL = resolveApiBase();
@@ -61,44 +41,6 @@ async function initializeApp() {
     await checkAuth();
     ensureBackgroundTexture();
     renderView();
-}
-
-async function fetchJSON(endpoint, options = {}) {
-    const init = { credentials: 'same-origin', ...options };
-    const response = await fetch(`${CONFIG.API_URL}/${endpoint}`, init);
-
-    const contentType = response.headers.get('content-type') || '';
-
-    if (!response.ok) {
-        // Tenta extrair mensagem de erro do JSON; se não for JSON, lê como texto
-        let message = `Erro ${response.status}`;
-        if (contentType.includes('application/json')) {
-            try {
-                const data = await response.json();
-                if (data && data.error) message = data.error;
-            } catch (_) {}
-        } else {
-            try {
-                const text = await response.text();
-                if (text && text.trim().length) message = text.slice(0, 200);
-            } catch (_) {}
-        }
-        throw new Error(message);
-    }
-
-    if (!contentType.includes('application/json')) {
-        // Servidor não interpretou PHP (provável) ou retorno não-JSON
-        const text = await response.text();
-        const hint = text.includes('<?php') ? 'Parece que o PHP não está sendo executado. Inicie um servidor PHP.' : 'Resposta não é JSON.';
-        throw new Error(`${hint}\nResposta inicial: ${text.slice(0, 120)}`);
-    }
-
-    return response.json();
-}
-
-function resolveImage(url, fallback = CONFIG.PLACEHOLDER_IMAGE_64) {
-    if (!url || !url.trim()) return fallback;
-    return url;
 }
 
 async function loadSettings() {
@@ -131,9 +73,14 @@ function ensureBackgroundTexture() {
 async function checkAuth() {
     try {
         const data = await fetchJSON('auth.php?action=check');
-        APP_STATE.isAdmin = !!data.is_admin;
+        APP_STATE.currentUser = {
+            id: data.id || null,
+            nome: data.nome || null,
+            papel: data.papel || null,
+            isLoggedIn: data.is_logged_in || false
+        };
     } catch (error) {
-        APP_STATE.isAdmin = false;
+        APP_STATE.currentUser = { id: null, nome: null, papel: null, isLoggedIn: false };
         console.error('Erro ao verificar autenticação:', error);
     }
 }
@@ -733,11 +680,12 @@ function renderAdminLogin(container) {
             <div class="corner top-left"></div>
             <div class="corner top-right"></div>
             <header class="header">
-                <h1 class="title">Admin</h1>
+                <h1 class="title">Acesso</h1>
             </header>
             <div class="admin-login">
-                <h2>Acesso Administrativo</h2>
-                <input type="password" id="admin-password" placeholder="Digite a senha">
+                <h2>Entrar</h2>
+                <input type="email" id="admin-email" placeholder="Email" autocomplete="email">
+                <input type="password" id="admin-password" placeholder="Senha" autocomplete="current-password">
                 <button onclick="doLogin()">Entrar</button>
             </div>
             <div class="footer">
@@ -748,14 +696,14 @@ function renderAdminLogin(container) {
 }
 
 async function doLogin() {
-    const password = document.getElementById('admin-password').value;
-    if (!password) {
-        showToast('Por favor, insira a senha', 'error');
+    const email = document.getElementById('admin-email')?.value || '';
+    const password = document.getElementById('admin-password')?.value || '';
+    if (!email || !password) {
+        showToast('Informe email e senha', 'error');
         return;
     }
     try {
-        // Primeiro tenta POST (seguro). Se o servidor responder 405, faz fallback para GET.
-        const body = new URLSearchParams({ password }).toString();
+        const body = new URLSearchParams({ email, password }).toString();
         let response = await fetch(`${CONFIG.API_URL}/auth.php?action=login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -763,8 +711,7 @@ async function doLogin() {
             body
         });
         if (response.status === 405) {
-            // fallback compatível com hosts que bloqueiam POST
-            response = await fetch(`${CONFIG.API_URL}/auth.php?action=login&password=${encodeURIComponent(password)}`, {
+            response = await fetch(`${CONFIG.API_URL}/auth.php?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
                 method: 'GET',
                 credentials: 'same-origin'
             });
@@ -776,11 +723,12 @@ async function doLogin() {
         }
         const data = await response.json();
         if (data.success) {
-            APP_STATE.isAdmin = true;
+            APP_STATE.currentUser = { id: data.id, nome: data.nome, papel: data.papel, isLoggedIn: true };
             showToast('Login efetuado', 'success');
-            navigateTo('admin-panel');
+            if (data.papel === 'dono') navigateTo('admin-panel');
+            else if (data.papel === 'vendedor') navigateTo('seller-panel');
         } else {
-            showToast('Senha incorreta', 'error');
+            showToast('Email ou senha incorretos', 'error');
         }
     } catch (error) {
         console.error('Erro ao fazer login:', error);
@@ -794,7 +742,7 @@ async function doLogout() {
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
     }
-    APP_STATE.isAdmin = false;
+    APP_STATE.currentUser = { id: null, nome: null, papel: null, isLoggedIn: false };
     navigateTo('home');
 }
 
@@ -1341,24 +1289,6 @@ async function promptDeleteItem(itemId) {
         console.error('Erro ao excluir item:', error);
         showToast(error.message || 'Erro ao excluir item', 'error');
     }
-}
-
-async function uploadImage(file) {
-    const maxBytes = 2 * 1024 * 1024;
-    if (file.size > maxBytes) {
-        throw new Error('Imagem excede 2MB');
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const response = await fetch(`${CONFIG.API_URL}/upload.php`, {
-        method: 'POST',
-        body: formData
-    });
-    const data = await response.json();
-    if (!data.success) {
-        throw new Error(data.error || 'Falha no upload da imagem');
-    }
-    return data.path;
 }
 
 function renderModal(innerHTML) {
