@@ -12,14 +12,22 @@ function renderAdminLogin(container) {
             <header class="header">
                 <h1 class="title">Acesso</h1>
             </header>
-            <div class="admin-login">
-                <h2>Entrar</h2>
-                <input type="email" id="admin-email" placeholder="Email" autocomplete="email">
-                <input type="password" id="admin-password" placeholder="Senha" autocomplete="current-password">
-                <button onclick="doLogin()">Entrar</button>
-            </div>
-            <div class="footer">
-                <button class="login-btn" onclick="goBack()">VOLTAR</button>
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-icon">⚔️</div>
+                    <h2>Mercado Warspear</h2>
+                    <p class="login-subtitle">Acesso ao Painel</p>
+                    <div class="login-field">
+                        <span class="login-field-icon">📧</span>
+                        <input type="email" id="admin-email" placeholder="Email" autocomplete="email">
+                    </div>
+                    <div class="login-field">
+                        <span class="login-field-icon">🔒</span>
+                        <input type="password" id="admin-password" placeholder="Senha" autocomplete="current-password">
+                    </div>
+                    <button class="login-submit" onclick="doLogin()">Entrar</button>
+                    <button class="login-btn" onclick="goBack()">VOLTAR</button>
+                </div>
             </div>
         </section>
     `;
@@ -96,6 +104,7 @@ async function renderAdminPanel(container) {
             <div class="corner top-right"></div>
             <header class="header">
                 <h1 class="title">Painel Administrativo</h1>
+                <div class="user-info-bar">Logado como: ${escapeHtml(APP_STATE.currentUser.nome)} (Dono)</div>
             </header>
             <div class="admin-panel">
                 <div class="accordion">
@@ -667,6 +676,7 @@ async function renderAccordionSellers() {
                     <div class="admin-item-actions">
                         <button class="admin-button" onclick="openSellerForm(${s.id})">Editar</button>
                         <button class="admin-button" onclick="toggleSeller(${s.id}, ${s.ativo ? 0 : 1})">${s.ativo ? 'Desativar' : 'Ativar'}</button>
+                        <button class="admin-button danger" onclick="deleteSeller(${s.id})">Excluir</button>
                     </div>
                 </div>`).join('');
         }
@@ -728,6 +738,27 @@ async function toggleSeller(id, ativo) {
     } catch (e) { console.error(e); showToast('Erro ao alterar status', 'error'); }
 }
 
+async function deleteSeller(id) {
+    try {
+        const sellers = await fetchJSON('sellers.php');
+        const s = sellers.find(seller => seller.id === id);
+        if (s && s.total_itens > 0) {
+            const confirmed = await confirmModal(`O vendedor "${s.nome}" tem ${s.total_itens} itens. Ao excluir, os itens permanecerão mas ficarão sem vendedor. Deseja continuar?`);
+            if (!confirmed) return;
+        } else {
+            const confirmed = await confirmModal('Deseja realmente excluir este vendedor?');
+            if (!confirmed) return;
+        }
+        await fetchJSON('sellers.php', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        showToast('Vendedor excluído', 'success');
+        await renderAccordionSellers();
+    } catch (e) { console.error(e); showToast('Erro ao excluir vendedor', 'error'); }
+}
+
 /* -----------------------------------------
    Globals expostos para onclick
    ----------------------------------------- */
@@ -738,3 +769,4 @@ window.openItemForm = openItemForm;
 window.promptDeleteItem = promptDeleteItem;
 window.openSellerForm = openSellerForm;
 window.toggleSeller = toggleSeller;
+window.deleteSeller = deleteSeller;

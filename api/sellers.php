@@ -107,6 +107,9 @@ switch ($method) {
             echo json_encode(['error' => 'ID invalido']);
             break;
         }
+        // Desvincula itens do vendedor antes de excluir
+        $stmt = $db->prepare('UPDATE itens SET id_vendedor = NULL WHERE id_vendedor = ?');
+        $stmt->execute([$id]);
         $stmt = $db->prepare('DELETE FROM usuarios WHERE id = ? AND papel = "vendedor"');
         $stmt->execute([$id]);
         echo json_encode(['success' => true]);

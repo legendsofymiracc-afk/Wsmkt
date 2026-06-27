@@ -48,14 +48,32 @@ async function renderSellerPanel(container) {
     await loadSellerItems();
     const count = APP_STATE.itemsList.length;
 
+    const itemsWithIcon = APP_STATE.itemsList.filter(i => i.imagem_url && i.imagem_url.trim() !== '').length;
+    const itemsNoPrice = APP_STATE.itemsList.filter(i => (!i.preco_moedas || i.preco_moedas === 0) && (!i.preco_reais || i.preco_reais === 0)).length;
+
     container.innerHTML = `
         <section class="panel" role="dialog">
             <div class="corner top-left"></div>
             <div class="corner top-right"></div>
             <header class="header">
                 <h1 class="title">Meus Anúncios (${count})</h1>
+                <div class="user-info-bar">Logado como: ${escapeHtml(APP_STATE.currentUser.nome)} (Vendedor)</div>
             </header>
             <div class="admin-panel">
+                <div class="stats-card">
+                    <div class="stat-item">
+                        <div class="stat-value">${count}</div>
+                        <div class="stat-label">Total de itens</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${itemsWithIcon}</div>
+                        <div class="stat-label">Com ícone</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${itemsNoPrice}</div>
+                        <div class="stat-label">Sem preço</div>
+                    </div>
+                </div>
                 <div class="accordion-filters">
                     <button class="admin-button" id="btn-new-seller-item">+ Novo Item</button>
                     <input type="text" id="seller-filter-term" placeholder="Buscar item...">

@@ -848,6 +848,168 @@ a {
 }
 
 /* =====================================================
+   👤 USER INFO BAR
+   ===================================================== */
+.user-info-bar {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 4px 0 0;
+    opacity: 0.9;
+}
+
+/* =====================================================
+   🔍 SEARCH BAR
+   ===================================================== */
+.search-bar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+.search-bar input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+}
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+.search-bar button {
+    padding: 10px 16px;
+    background: var(--orange);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+}
+.search-bar button:hover {
+    filter: brightness(1.1);
+}
+
+/* =====================================================
+   📊 STATS CARD
+   ===================================================== */
+.stats-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+.stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 215, 0, 0.06);
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+.stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+}
+.stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+/* =====================================================
+   🔐 MODERN LOGIN (glassmorphism)
+   ===================================================== */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.login-card {
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid var(--gold-border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+.login-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+.login-card h2 {
+    margin: 0;
+    color: var(--gold);
+    font-size: 24px;
+}
+.login-subtitle {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+.login-field {
+    position: relative;
+    margin-bottom: 16px;
+}
+.login-field-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    z-index: 1;
+    pointer-events: none;
+}
+.login-field input {
+    width: 100%;
+    padding: 12px 12px 12px 44px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: border-color 200ms, box-shadow 200ms;
+}
+.login-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.15);
+}
+.login-field input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+.login-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #d46a2e, #b85a1e);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: transform 100ms, box-shadow 200ms;
+}
+.login-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(212, 106, 46, 0.4);
+}
+.login-submit:active {
+    transform: translateY(0);
+}
+
+/* =====================================================
    📱 MOBILE NAV (rodapé fixo)
    ===================================================== */
 .mobile-nav {

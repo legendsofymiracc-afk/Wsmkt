@@ -22,6 +22,7 @@ function renderHome(container) {
         : `<button class="login-btn" onclick="window.close()">FECHAR</button>`;
 
     container.innerHTML = renderPanel('Mercado', `
+        ${renderSearchBar()}
         <div class="row" onclick="navigateTo('general-categories')" tabindex="0">
             <img class="icon" src="images/uploads/mercado.png" alt="Procurar">
             <div class="label">Procurar no mercado</div>
@@ -30,4 +31,5 @@ function renderHome(container) {
         ${adminBtn}
     `, logoutBtn, false);
     addRowSelectionBehavior();
+    setupSearchBar();
 }

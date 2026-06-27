@@ -59,6 +59,13 @@ switch ($method) {
         $generalId = isset($_GET['general_id']) ? (int) $_GET['general_id'] : 0;
         $itemId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
         $sellerFilter = isset($_GET['seller_id']) ? (int) $_GET['seller_id'] : 0;
+        $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+        if ($searchTerm !== '' && strlen($searchTerm) >= 2) {
+            $items = fetchItemsWithRelations($db, 'i.nome LIKE ?', ['%' . $searchTerm . '%']);
+            echo json_encode($items);
+            break;
+        }
 
         if ($sellerFilter > 0) {
             $items = fetchItemsWithRelations($db, 'i.id_vendedor = ?', [$sellerFilter]);
