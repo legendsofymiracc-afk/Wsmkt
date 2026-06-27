@@ -95,6 +95,7 @@ function initDB() {
     if (!in_array('id_vendedor', $cols)) {
         $db->exec('ALTER TABLE itens ADD COLUMN id_vendedor INTEGER DEFAULT NULL');
     }
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_itens_vendedor ON itens(id_vendedor)');
 
     // Email master padrão
     $stmt = $db->prepare('INSERT OR IGNORE INTO configuracoes (chave, valor) VALUES (?, ?)');
@@ -230,18 +231,6 @@ define('ADMIN_PASSWORD', 'admin123');
 
 // Inicializar banco ao incluir este arquivo
 initDB();
-
-// Headers para JSON (fallback para endpoints que ainda não usam routes.php)
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
-
-// Tratar OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 // Configuração de sessão para admin
 session_start();

@@ -68,3 +68,12 @@ function addRowSelectionBehavior() {
         });
     });
 }
+
+function fillSelect(select, items, placeholder) {
+    if (!select) return;
+    const options = [`<option value="0">${placeholder}</option>`];
+    items.forEach(item => {
+        options.push(`<option value="${item.id}">${escapeHtml(item.nome)}</option>`);
+    });
+    select.innerHTML = options.join('');
+}

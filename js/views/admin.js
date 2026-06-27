@@ -348,15 +348,6 @@ function setupItemsAccordion() {
     renderAdminItemsList(listContainer, 0, 0, 0, '');
 }
 
-function fillSelect(select, items, placeholder) {
-    if (!select) return;
-    const options = [`<option value="0">${placeholder}</option>`];
-    items.forEach(item => {
-        options.push(`<option value="${item.id}">${escapeHtml(item.nome)}</option>`);
-    });
-    select.innerHTML = options.join('');
-}
-
 function renderAdminItemsList(container, generalId, categoryId, subcategoryId, term) {
     if (!container) return;
     const filterTerm = (term || '').toLowerCase();
@@ -669,8 +660,8 @@ async function renderAccordionSellers() {
             container.innerHTML = sellers.map(s => `
                 <div class="admin-row">
                     <div>
-                        <div class="title">${s.nome}</div>
-                        <div class="subtitle">📧 ${s.email} • 📱 ${s.whatsapp || 'N/A'} • ${s.total_itens} itens</div>
+                        <div class="title">${escapeHtml(s.nome)}</div>
+                        <div class="subtitle">📧 ${escapeHtml(s.email)} • 📱 ${escapeHtml(s.whatsapp || 'N/A')} • ${s.total_itens} itens</div>
                         <div class="subtitle">${s.ativo ? '🟢 Ativo' : '🔴 Inativo'} • Desde ${s.criado_em || 'N/A'}</div>
                     </div>
                     <div class="admin-item-actions">

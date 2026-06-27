@@ -62,6 +62,7 @@ function verifyCsrfToken(): bool {
 
 // Headers de segurança
 function sendSecurityHeaders(): void {
+    header('Content-Type: application/json; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: DENY');
     header('Access-Control-Allow-Origin: *');
