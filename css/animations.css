@@ -18,7 +18,7 @@
     transition: transform 150ms ease, box-shadow 150ms ease;
 }
 .row {
-    transition: transform 150ms ease, box-shadow 150ms ease;
+    transition: transform 150ms ease, box-shadow 150ms ease, background 0.2s ease;
 }
 
 /* Ripple effect (ativado via JS) */

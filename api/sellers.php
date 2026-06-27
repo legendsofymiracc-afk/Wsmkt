@@ -65,7 +65,18 @@ switch ($method) {
         $fields = [];
         $params = [];
         if (isset($data['nome'])) { $fields[] = 'nome = ?'; $params[] = trim((string) $data['nome']); }
-        if (isset($data['email'])) { $fields[] = 'email = ?'; $params[] = trim((string) $data['email']); }
+        if (isset($data['email'])) {
+            $newEmail = trim((string) $data['email']);
+            $check = $db->prepare('SELECT COUNT(*) FROM usuarios WHERE email = ? AND id != ?');
+            $check->execute([$newEmail, $id]);
+            if ($check->fetchColumn() > 0) {
+                http_response_code(409);
+                echo json_encode(['error' => 'Email ja cadastrado']);
+                break;
+            }
+            $fields[] = 'email = ?';
+            $params[] = $newEmail;
+        }
         if (isset($data['whatsapp'])) { $fields[] = 'whatsapp = ?'; $params[] = trim((string) $data['whatsapp']); }
         if (isset($data['ativo'])) { $fields[] = 'ativo = ?'; $params[] = (int) $data['ativo']; }
         if (!empty($data['nova_senha'])) {

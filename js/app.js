@@ -159,11 +159,13 @@ async function renderView() {
     }
 
     // Verificar scroll na lista após renderizar
-    const list = document.querySelector('.list');
-    if (list) {
-        const hasScroll = list.scrollHeight > list.clientHeight;
-        list.classList.toggle('has-scroll', hasScroll);
-    }
+    requestAnimationFrame(() => {
+        const list = document.querySelector('.list');
+        if (list) {
+            const hasScroll = list.scrollHeight > list.clientHeight;
+            list.classList.toggle('has-scroll', hasScroll);
+        }
+    });
 }
 
 window.navigateTo = navigateTo;
