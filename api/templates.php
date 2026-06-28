@@ -6,15 +6,26 @@ $db = getDB();
 
 switch ($method) {
     case 'GET':
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
         $limit = isset($_GET['limit']) ? min((int)$_GET['limit'], 50) : 20;
 
+        // Detalhe de um template específico
+        if ($id > 0) {
+            $stmt = $db->prepare('SELECT * FROM templates WHERE id = ?');
+            $stmt->execute([$id]);
+            $template = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($template) {
+                $template['atributos'] = json_decode($template['atributos'] ?: '{}', true);
+            }
+            echo json_encode($template ?: null);
+            break;
+        }
+
         if (strlen($search) >= 2) {
-            // Busca por nome (ILIKE nao existe no SQLite, usar LIKE case-insensitive via COLLATE)
             $stmt = $db->prepare('SELECT * FROM templates WHERE nome LIKE ? COLLATE NOCASE ORDER BY nome LIMIT ?');
             $stmt->execute(['%' . $search . '%', $limit]);
         } elseif (!empty($search) && strlen($search) === 1) {
-            // 1 caractere: retorna vazio para evitar excesso de resultados
             echo json_encode([]);
             exit;
         } else {
