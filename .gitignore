@@ -1,4 +1,4 @@
 node_modules/
 package-lock.json
-*.js
 node_modules/\npackage-lock.json\nscrape_*.js\n*.js\n!js/**/*.js\n!api/**/*.php
+scrape_*.js
