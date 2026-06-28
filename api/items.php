@@ -5,11 +5,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
 function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []): array {
-    $sql = 'SELECT 
+    $sql = 'SELECT
                 i.id,
                 i.id_subcategoria,
                 i.id_categoria,
                 i.id_geral,
+                i.id_template,
                 i.nome,
                 i.descricao,
                 i.preco_moedas,
@@ -18,6 +19,8 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
                 i.imagem_url,
                 v.nome AS nome_vendedor,
                 v.whatsapp AS vendedor_whatsapp,
+                t.atributos AS template_atributos,
+                t.imagem_url AS template_imagem,
                 sub.nome AS subcategoria_nome,
                 COALESCE(cat_explicit.id, cat_from_sub.id) AS categoria_id,
                 COALESCE(cat_explicit.nome, cat_from_sub.nome) AS categoria_nome,
@@ -30,7 +33,8 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
             LEFT JOIN categorias cat_explicit ON cat_explicit.id = i.id_categoria
             LEFT JOIN categorias geral_from_cat ON geral_from_cat.id = cat_explicit.id_pai
             LEFT JOIN categorias geral_explicit ON geral_explicit.id = i.id_geral
-            LEFT JOIN usuarios v ON v.id = i.id_vendedor';
+            LEFT JOIN usuarios v ON v.id = i.id_vendedor
+            LEFT JOIN templates t ON t.id = i.id_template';
 
     if ($where) {
         $sql .= ' WHERE ' . $where;
@@ -123,7 +127,9 @@ switch ($method) {
             exit();
         }
 
-        $stmt = $db->prepare('INSERT INTO itens (id_subcategoria, id_categoria, id_geral, nome, descricao, preco_moedas, preco_reais, quantidade_disponivel, imagem_url, id_vendedor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $idTemplate = !empty($data['id_template']) ? (int)$data['id_template'] : null;
+
+        $stmt = $db->prepare('INSERT INTO itens (id_subcategoria, id_categoria, id_geral, nome, descricao, preco_moedas, preco_reais, quantidade_disponivel, imagem_url, id_vendedor, id_template) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $idSub,
             $idCat,
@@ -134,7 +140,8 @@ switch ($method) {
             isset($data['preco_reais']) ? (float)$data['preco_reais'] : 0,
             isset($data['quantidade_disponivel']) ? (int)$data['quantidade_disponivel'] : 0,
             $data['imagem_url'] ?? '',
-            isset($data['id_vendedor']) ? (int)$data['id_vendedor'] : null
+            isset($data['id_vendedor']) ? (int)$data['id_vendedor'] : null,
+            $idTemplate
         ]);
 
         echo json_encode([

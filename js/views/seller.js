@@ -135,12 +135,16 @@ async function openSellerItemForm(itemId = null) {
         <div class="form-actions"><button class="btn cancel" onclick="closeModal()">Cancelar</button><button class="btn" id="sf-submit">${item ? 'Salvar' : 'Criar Anúncio'}</button></div>
     `);
 
+    // Armazena o template selecionado para envio no POST
+    let selectedTemplateId = item ? (item.id_template || null) : null;
+
     // Template autocomplete for seller
     setupTemplateAutocomplete('sf-template-search', 'sf-template-dropdown', (template) => {
         const nameInput = document.getElementById('sf-name');
         const urlInput = document.getElementById('sf-image-url');
         if (nameInput) nameInput.value = template.nome;
         if (urlInput && template.imagem_url) urlInput.value = template.imagem_url;
+        selectedTemplateId = template.id;
 
         // Auto-seleciona categoria baseado no template
         if (template.categoria) {
@@ -285,7 +289,7 @@ async function openSellerItemForm(itemId = null) {
             catch (e) { showToast(e.message, 'error'); return; }
         }
 
-        const payload = { nome, descricao: desc, preco_moedas: coins, preco_reais: brl, quantidade_disponivel: qty, imagem_url: imageUrl };
+        const payload = { nome, descricao: desc, preco_moedas: coins, preco_reais: brl, quantidade_disponivel: qty, imagem_url: imageUrl, id_template: selectedTemplateId };
         if (sid) payload.id_subcategoria = sid;
         else if (cid) payload.id_categoria = cid;
         else payload.id_geral = gid;

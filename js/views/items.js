@@ -79,19 +79,39 @@ async function renderItemDetails(container) {
     const pBRL = formatCurrencyBRL(resolveBRLValue(item));
     const sellerInfo = item.nome_vendedor ? `<p><strong>Vendido por:</strong> ${escapeHtml(item.nome_vendedor)}</p>` : '';
 
-    // Busca stats do template correspondente
+    // Usa atributos do template vinculado (ou busca por nome como fallback)
     let statsHTML = '';
-    try {
-        const templates = await fetchJSON(`templates.php?search=${encodeURIComponent(item.nome)}`);
-        if (templates && templates.length > 0) {
-            const match = templates.find(t => t.nome === item.nome) || templates[0];
-            if (match && match.atributos) {
-                let attrs = match.atributos;
-                if (typeof attrs === 'string') { try { attrs = JSON.parse(attrs); } catch(e) { attrs = null; } }
-                if (attrs) statsHTML = renderStatsHTML(attrs);
+    let attrs = null;
+
+    // Primeiro tenta usar o template_atributos que já vem do backend
+    if (item.template_atributos) {
+        try {
+            if (typeof item.template_atributos === 'string') {
+                attrs = JSON.parse(item.template_atributos);
+            } else {
+                attrs = item.template_atributos;
             }
-        }
-    } catch(e) {}
+        } catch(e) { attrs = null; }
+    }
+
+    // Fallback: busca por nome
+    if (!attrs) {
+        try {
+            const templates = await fetchJSON(`templates.php?search=${encodeURIComponent(item.nome)}`);
+            if (templates && templates.length > 0) {
+                const match = templates.find(t => t.nome === item.nome) || templates[0];
+                if (match && match.atributos) {
+                    if (typeof match.atributos === 'string') {
+                        try { attrs = JSON.parse(match.atributos); } catch(e) { attrs = null; }
+                    } else {
+                        attrs = match.atributos;
+                    }
+                }
+            }
+        } catch(e) {}
+    }
+
+    if (attrs) statsHTML = renderStatsHTML(attrs);
 
     container.innerHTML = renderPanel(escapeHtml(item.nome), `
         <div class="item-details">
