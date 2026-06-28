@@ -1,0 +1,29 @@
+{
+  "name": "game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wsdb_index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amaple28/public_html--11-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Amaple28/public_html--11-/issues"
+  },
+  "homepage": "https://github.com/Amaple28/public_html--11-#readme",
+  "dependencies": {
+    "puppeteer": "^25.2.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

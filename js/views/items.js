@@ -40,33 +40,75 @@ function renderItems(container) {
     addRowSelectionBehavior();
 }
 
-// Renderiza os atributos (bonus, skills) com icones do wsdb
-function renderStatsHTML(attrs) {
+// Renderiza atributos como no wsdb.xyz — usa dados RAW da API
+function renderStatsHTML(attrs, rawAttrs) {
     if (!attrs || typeof attrs !== 'object') return '';
-    const bonuses = [];
     const baseIconUrl = 'https://wsdb.xyz/icons/';
+    const rows = [];
 
-    if (attrs.skill && attrs.skill.name) {
-        bonuses.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${attrs.skill.icon}.webp" alt=""><span class="stat-label">Habilidade:</span> <span class="stat-value">${escapeHtml(attrs.skill.name)}</span></div>`);
-    }
+    // Usa rawAttrs (dados completos da API) se disponível, senão o compacto
+    const detail = (rawAttrs && typeof rawAttrs === 'object' && Object.keys(rawAttrs).length > 10) ? rawAttrs : null;
+
+    // Nível e Raridade
+    const rarityMap = {0:'⚪ Comum',1:'🟢 Incomum',2:'🔵 Raro',3:'🟣 Épico',4:'🟠 Lendário',5:'🔴 Mítico'};
+    const rar = rarityMap[attrs.color] || 'Comum';
+    rows.push(`<div class="stat-header"><span>Nível ${attrs.level || '?'}</span><span>${rar}</span></div>`);
+
+    // Stats (bonus)
     for (let i = 1; i <= 4; i++) {
-        const b = attrs['bonus' + i];
-        if (b && b.name) {
-            bonuses.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${b.icon}.webp" alt=""><span class="stat-label">${escapeHtml(b.name)}:</span> <span class="stat-value">${b.value.toLocaleString()}</span></div>`);
+        const nameKey = 'bonus' + i + 'Name';
+        const valKey = 'value' + i;
+        const iconKey = 'bonus' + i + 'Icon';
+        let name, value, icon;
+        if (detail && detail[nameKey]) {
+            name = detail[nameKey];
+            value = detail[valKey];
+            icon = detail[iconKey];
+        } else {
+            const b = attrs['bonus' + i];
+            if (b && b.name) { name = b.name; value = b.value; icon = b.icon; }
         }
-    }
-    if (attrs.itemSet) {
-        bonuses.push(`<div class="stat-row stat-set"><span class="stat-label">Set:</span> <span class="stat-value">${escapeHtml(attrs.itemSet)}</span></div>`);
-        for (let i = 1; i <= 2; i++) {
-            const sb = attrs['setBonus' + i];
-            if (sb && sb.name) {
-                bonuses.push(`<div class="stat-row stat-set-bonus"><span class="stat-label">${escapeHtml(sb.name)}:</span> <span class="stat-value">${sb.value.toLocaleString()}</span></div>`);
-            }
+        if (name) {
+            const displayVal = (value != null) ? Number(value).toLocaleString() : '?';
+            rows.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${icon}.webp" alt=""><span class="stat-label">${escapeHtml(name)}</span><span class="stat-value">${displayVal}</span></div>`);
         }
     }
 
-    if (bonuses.length === 0) return '';
-    return `<div class="item-stats"><h3>⚔️ Atributos</h3>${bonuses.join('')}</div>`;
+    // Habilidade
+    let skillName, skillIcon;
+    if (detail && detail.skillName) {
+        skillName = detail.skillName;
+        skillIcon = detail.skillIcon;
+    } else if (attrs.skill && attrs.skill.name) {
+        skillName = attrs.skill.name;
+        skillIcon = attrs.skill.icon;
+    }
+    if (skillName) {
+        rows.push(`<div class="stat-section">Habilidade</div>`);
+        rows.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${skillIcon}.webp" alt=""><span class="stat-label">${escapeHtml(skillName)}</span></div>`);
+    }
+
+    // Set
+    let setName, setBonus1Name, setBonus1Val, setBonus2Name, setBonus2Val;
+    if (detail) {
+        setName = detail.itemSet;
+        setBonus1Name = detail.setBonus1Name;
+        setBonus1Val = detail.setValue1;
+        setBonus2Name = detail.setBonus2Name;
+        setBonus2Val = detail.setValue2;
+    } else {
+        setName = attrs.itemSet;
+        if (attrs.setBonus1) { setBonus1Name = attrs.setBonus1.name; setBonus1Val = attrs.setBonus1.value; }
+        if (attrs.setBonus2) { setBonus2Name = attrs.setBonus2.name; setBonus2Val = attrs.setBonus2.value; }
+    }
+    if (setName) {
+        rows.push(`<div class="stat-section">Set: ${escapeHtml(setName)}</div>`);
+        if (setBonus1Name) rows.push(`<div class="stat-row stat-set"><span class="stat-label">${escapeHtml(setBonus1Name)}</span><span class="stat-value">${Number(setBonus1Val).toLocaleString()}</span></div>`);
+        if (setBonus2Name) rows.push(`<div class="stat-row stat-set"><span class="stat-label">${escapeHtml(setBonus2Name)}</span><span class="stat-value">${Number(setBonus2Val).toLocaleString()}</span></div>`);
+    }
+
+    if (rows.length === 0) return '';
+    return `<div class="item-stats">${rows.join('')}</div>`;
 }
 
 async function renderItemDetails(container) {
@@ -82,36 +124,52 @@ async function renderItemDetails(container) {
     // Usa atributos do template vinculado (ou busca por nome como fallback)
     let statsHTML = '';
     let attrs = null;
+    let rawAttrs = null;
 
-    // Primeiro tenta usar o template_atributos que já vem do backend
+    // Primeiro tenta usar os dados RAW (completos) do backend
+    if (item.template_atributos_raw) {
+        try {
+            rawAttrs = typeof item.template_atributos_raw === 'string'
+                ? JSON.parse(item.template_atributos_raw)
+                : item.template_atributos_raw;
+        } catch(e) { rawAttrs = null; }
+    }
+
+    // Depois o compacto
     if (item.template_atributos) {
         try {
-            if (typeof item.template_atributos === 'string') {
-                attrs = JSON.parse(item.template_atributos);
-            } else {
-                attrs = item.template_atributos;
-            }
+            attrs = typeof item.template_atributos === 'string'
+                ? JSON.parse(item.template_atributos)
+                : item.template_atributos;
         } catch(e) { attrs = null; }
     }
 
     // Fallback: busca por nome
-    if (!attrs) {
+    if (!attrs && !rawAttrs) {
         try {
             const templates = await fetchJSON(`templates.php?search=${encodeURIComponent(item.nome)}`);
             if (templates && templates.length > 0) {
                 const match = templates.find(t => t.nome === item.nome) || templates[0];
-                if (match && match.atributos) {
-                    if (typeof match.atributos === 'string') {
-                        try { attrs = JSON.parse(match.atributos); } catch(e) { attrs = null; }
-                    } else {
-                        attrs = match.atributos;
+                if (match) {
+                    if (match.atributos_detalhes) {
+                        try { rawAttrs = JSON.parse(match.atributos_detalhes); } catch(e) {}
+                    }
+                    if (match.atributos) {
+                        try {
+                            attrs = typeof match.atributos === 'string' ? JSON.parse(match.atributos) : match.atributos;
+                        } catch(e) { attrs = null; }
                     }
                 }
             }
         } catch(e) {}
     }
 
-    if (attrs) statsHTML = renderStatsHTML(attrs);
+    // Garante que temos pelo menos o compacto
+    if (!attrs && rawAttrs) {
+        attrs = { level: rawAttrs.level, color: rawAttrs.color };
+    }
+
+    if (attrs) statsHTML = renderStatsHTML(attrs, rawAttrs);
 
     container.innerHTML = renderPanel(escapeHtml(item.nome), `
         <div class="item-details">

@@ -30,6 +30,7 @@ function sanitizeItems(items) {
         nome_vendedor: item.nome_vendedor || '',
         vendedor_whatsapp: item.vendedor_whatsapp || '',
         template_atributos: item.template_atributos || null,
+        template_atributos_raw: item.template_atributos_raw || null,
         template_imagem: item.template_imagem || '',
         nome: item.nome,
         descricao: item.descricao,

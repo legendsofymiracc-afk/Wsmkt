@@ -20,6 +20,7 @@ function fetchItemsWithRelations(PDO $db, string $where = '', array $params = []
                 v.nome AS nome_vendedor,
                 v.whatsapp AS vendedor_whatsapp,
                 t.atributos AS template_atributos,
+                t.atributos_detalhes AS template_atributos_raw,
                 t.imagem_url AS template_imagem,
                 sub.nome AS subcategoria_nome,
                 COALESCE(cat_explicit.id, cat_from_sub.id) AS categoria_id,

@@ -1322,3 +1322,16 @@ a {
 .stat-set-bonus .stat-label {
     color: var(--gold);
 }
+
+.stat-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0 10px 0; margin-bottom: 8px;
+    border-bottom: 2px solid rgba(212,175,55,0.3);
+    font-size: 14px; font-weight: 700; color: #fff;
+}
+.stat-section {
+    margin-top: 12px; padding: 6px 0;
+    font-size: 12px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px;
+    border-top: 1px solid rgba(212,175,55,0.15);
+}
