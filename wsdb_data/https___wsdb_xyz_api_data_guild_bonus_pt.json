@@ -1,0 +1,317 @@
+{
+  "list": [
+    {
+      "id": 1,
+      "name": "Defesa Física da Guilda",
+      "icon": 2721,
+      "level": 1,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 62,
+          "value": 500
+        },
+        {
+          "level": 2,
+          "bonus": 62,
+          "value": 1000
+        },
+        {
+          "level": 3,
+          "bonus": 62,
+          "value": 1500
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Vida da Guilda",
+      "icon": 2719,
+      "level": 3,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 29,
+          "value": 300
+        },
+        {
+          "level": 2,
+          "bonus": 29,
+          "value": 600
+        },
+        {
+          "level": 3,
+          "bonus": 29,
+          "value": 900
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Defesa Mágica da Guilda",
+      "icon": 2720,
+      "level": 2,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 63,
+          "value": 500
+        },
+        {
+          "level": 2,
+          "bonus": 63,
+          "value": 1000
+        },
+        {
+          "level": 3,
+          "bonus": 63,
+          "value": 1500
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Energia da Guilda",
+      "icon": 96,
+      "level": 4,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 31,
+          "value": 500
+        },
+        {
+          "level": 2,
+          "bonus": 31,
+          "value": 1000
+        },
+        {
+          "level": 3,
+          "bonus": 31,
+          "value": 1500
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Regeneração de Vida da Guilda",
+      "icon": 2861,
+      "level": 5,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 64,
+          "value": 1000
+        },
+        {
+          "level": 2,
+          "bonus": 64,
+          "value": 2000
+        },
+        {
+          "level": 3,
+          "bonus": 64,
+          "value": 3000
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Regeneração de Energia da Guilda",
+      "icon": 2859,
+      "level": 6,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 65,
+          "value": 1000
+        },
+        {
+          "level": 2,
+          "bonus": 65,
+          "value": 2000
+        },
+        {
+          "level": 3,
+          "bonus": 65,
+          "value": 3000
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Superioridade da Guilda",
+      "icon": 3586,
+      "level": 10,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 19,
+          "value": 500
+        },
+        {
+          "level": 1,
+          "bonus": 39,
+          "value": 500
+        },
+        {
+          "level": 2,
+          "bonus": 19,
+          "value": 1000
+        },
+        {
+          "level": 2,
+          "bonus": 39,
+          "value": 1000
+        },
+        {
+          "level": 3,
+          "bonus": 19,
+          "value": 1500
+        },
+        {
+          "level": 3,
+          "bonus": 39,
+          "value": 1500
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Poder da Guilda",
+      "icon": 3171,
+      "level": 7,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 13,
+          "value": 300
+        },
+        {
+          "level": 1,
+          "bonus": 14,
+          "value": 300
+        },
+        {
+          "level": 2,
+          "bonus": 13,
+          "value": 500
+        },
+        {
+          "level": 2,
+          "bonus": 14,
+          "value": 500
+        },
+        {
+          "level": 3,
+          "bonus": 13,
+          "value": 1000
+        },
+        {
+          "level": 3,
+          "bonus": 14,
+          "value": 1000
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Força da Guilda",
+      "icon": 3173,
+      "level": 8,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 17,
+          "value": 200
+        },
+        {
+          "level": 1,
+          "bonus": 20,
+          "value": 200
+        },
+        {
+          "level": 2,
+          "bonus": 17,
+          "value": 400
+        },
+        {
+          "level": 2,
+          "bonus": 20,
+          "value": 400
+        },
+        {
+          "level": 3,
+          "bonus": 17,
+          "value": 600
+        },
+        {
+          "level": 3,
+          "bonus": 20,
+          "value": 600
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Precisão da Guilda",
+      "icon": 4401,
+      "level": 11,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 16,
+          "value": 300
+        },
+        {
+          "level": 2,
+          "bonus": 16,
+          "value": 500
+        },
+        {
+          "level": 3,
+          "bonus": 16,
+          "value": 700
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Indestrutibilidade da Guilda",
+      "icon": 4403,
+      "level": 12,
+      "bonuses": [
+        {
+          "level": 1,
+          "bonus": 5,
+          "value": 200
+        },
+        {
+          "level": 1,
+          "bonus": 61,
+          "value": 200
+        },
+        {
+          "level": 2,
+          "bonus": 5,
+          "value": 400
+        },
+        {
+          "level": 2,
+          "bonus": 61,
+          "value": 400
+        },
+        {
+          "level": 3,
+          "bonus": 5,
+          "value": 600
+        },
+        {
+          "level": 3,
+          "bonus": 61,
+          "value": 600
+        }
+      ]
+    }
+  ]
+}

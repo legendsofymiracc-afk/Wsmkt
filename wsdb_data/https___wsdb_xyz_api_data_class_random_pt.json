@@ -1,0 +1,52 @@
+{
+  "classId": 11,
+  "className": "Necromante",
+  "classIcon": 2276,
+  "factionId": 4,
+  "factionName": "Proscrito",
+  "factionIcon": 2290,
+  "skill": 47,
+  "skills": [
+    72,
+    71,
+    73,
+    74,
+    77,
+    705,
+    47,
+    21,
+    22,
+    802,
+    810,
+    818,
+    839,
+    845,
+    847,
+    863,
+    871,
+    872,
+    906,
+    916,
+    926
+  ],
+  "lookMale": null,
+  "lookFemale": null,
+  "colors": [
+    {
+      "src": 56089,
+      "dst": 7043468
+    },
+    {
+      "src": 65313,
+      "dst": 11912910
+    },
+    {
+      "src": 3271498,
+      "dst": 8096412
+    },
+    {
+      "src": 10288037,
+      "dst": 13559799
+    }
+  ]
+}
