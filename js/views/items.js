@@ -69,7 +69,21 @@ function renderStatsHTML(attrs, rawAttrs) {
             if (b && b.name) { name = b.name; value = b.value; icon = b.icon; }
         }
         if (name) {
-            const displayVal = (value != null) ? Number(value).toLocaleString() : '?';
+            let rawVal = Number(value);
+            let displayVal;
+            // Aplica escala igual ao wsdb.xyz:
+            // bonusParams: bit 0 (1) = percentual, bit 4 (16) = decimal
+            // Valores >1000 geralmente precisam ser divididos por 100
+            const params = (detail ? detail['bonus' + i + 'Params'] : null) || 0;
+            if (params & 1) {
+                // Percentual
+                displayVal = (rawVal / 10).toFixed(1) + '%';
+            } else if (rawVal > 999) {
+                // Valores grandes: divide por 100 (ex: 39100 → 391)
+                displayVal = (rawVal / 100).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+            } else {
+                displayVal = rawVal.toLocaleString();
+            }
             rows.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${icon}.webp" alt=""><span class="stat-label">${escapeHtml(name)}</span><span class="stat-value">${displayVal}</span></div>`);
         }
     }
