@@ -2,3 +2,5 @@ node_modules/
 package-lock.json
 node_modules/\npackage-lock.json\nscrape_*.js\n*.js\n!js/**/*.js\n!api/**/*.php
 scrape_*.js
+database/*.db-shm
+database/*.db-wal
