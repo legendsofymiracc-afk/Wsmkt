@@ -40,6 +40,35 @@ function renderItems(container) {
     addRowSelectionBehavior();
 }
 
+// Renderiza os atributos (bonus, skills) com icones do wsdb
+function renderStatsHTML(attrs) {
+    if (!attrs || typeof attrs !== 'object') return '';
+    const bonuses = [];
+    const baseIconUrl = 'https://wsdb.xyz/icons/';
+
+    if (attrs.skill && attrs.skill.name) {
+        bonuses.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${attrs.skill.icon}.webp" alt=""><span class="stat-label">Habilidade:</span> <span class="stat-value">${escapeHtml(attrs.skill.name)}</span></div>`);
+    }
+    for (let i = 1; i <= 4; i++) {
+        const b = attrs['bonus' + i];
+        if (b && b.name) {
+            bonuses.push(`<div class="stat-row"><img class="stat-icon" src="${baseIconUrl}${b.icon}.webp" alt=""><span class="stat-label">${escapeHtml(b.name)}:</span> <span class="stat-value">${b.value.toLocaleString()}</span></div>`);
+        }
+    }
+    if (attrs.itemSet) {
+        bonuses.push(`<div class="stat-row stat-set"><span class="stat-label">Set:</span> <span class="stat-value">${escapeHtml(attrs.itemSet)}</span></div>`);
+        for (let i = 1; i <= 2; i++) {
+            const sb = attrs['setBonus' + i];
+            if (sb && sb.name) {
+                bonuses.push(`<div class="stat-row stat-set-bonus"><span class="stat-label">${escapeHtml(sb.name)}:</span> <span class="stat-value">${sb.value.toLocaleString()}</span></div>`);
+            }
+        }
+    }
+
+    if (bonuses.length === 0) return '';
+    return `<div class="item-stats"><h3>⚔️ Atributos</h3>${bonuses.join('')}</div>`;
+}
+
 async function renderItemDetails(container) {
     let item = APP_STATE.itemsList.find(i => i.id === APP_STATE.currentItemId) || APP_STATE.allItems.find(i => i.id === APP_STATE.currentItemId);
     if (!item && APP_STATE.currentItemId != null) {
@@ -49,6 +78,21 @@ async function renderItemDetails(container) {
     const pCoins = item.preco_moedas || 0;
     const pBRL = formatCurrencyBRL(resolveBRLValue(item));
     const sellerInfo = item.nome_vendedor ? `<p><strong>Vendido por:</strong> ${escapeHtml(item.nome_vendedor)}</p>` : '';
+
+    // Busca stats do template correspondente
+    let statsHTML = '';
+    try {
+        const templates = await fetchJSON(`templates.php?search=${encodeURIComponent(item.nome)}`);
+        if (templates && templates.length > 0) {
+            const match = templates.find(t => t.nome === item.nome) || templates[0];
+            if (match && match.atributos) {
+                let attrs = match.atributos;
+                if (typeof attrs === 'string') { try { attrs = JSON.parse(attrs); } catch(e) { attrs = null; } }
+                if (attrs) statsHTML = renderStatsHTML(attrs);
+            }
+        }
+    } catch(e) {}
+
     container.innerHTML = renderPanel(escapeHtml(item.nome), `
         <div class="item-details">
             <div class="item-details-image"><img src="${resolveImage(item.imagem_url, CONFIG.PLACEHOLDER_IMAGE_200)}" alt="${escapeHtml(item.nome)}"></div>
@@ -58,6 +102,7 @@ async function renderItemDetails(container) {
                 <p class="price-line"><span class="price-icon game-coin" aria-hidden="true"></span><span class="price-label">Preço:</span> <span class="price-value">${pCoins} moedas</span></p>
                 <p class="price-line"><span class="price-icon brl-coin" aria-hidden="true"></span><span class="price-label">Preço R$:</span> <span class="price-value">${pBRL}</span></p>
                 ${sellerInfo}
+                ${statsHTML}
                 <div class="purchase-actions"><button type="button" class="btn-whatsapp" onclick="whatsBuy(${item.id})"><span class="wa-icon" aria-hidden="true"></span>Comprar no WhatsApp</button></div>
                 <p class="stock-line"><strong>Quantidade:</strong> ${item.quantidade_disponivel}</p>
             </div>

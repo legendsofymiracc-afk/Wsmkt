@@ -1275,3 +1275,50 @@ a {
     padding: 8px;
   }
 }
+
+/* =====================================================
+   ⚔️ ITEM STATS (atributos detalhados)
+   ===================================================== */
+.item-stats {
+    margin: 16px 0;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 8px;
+}
+.item-stats h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+}
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.stat-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+.stat-label {
+    color: #aaa;
+    min-width: 100px;
+}
+.stat-value {
+    color: #fff;
+    font-weight: 600;
+}
+.stat-set {
+    margin-top: 6px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    padding-top: 8px;
+}
+.stat-set .stat-label,
+.stat-set-bonus .stat-label {
+    color: var(--gold);
+}

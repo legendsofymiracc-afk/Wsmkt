@@ -142,21 +142,62 @@ async function openSellerItemForm(itemId = null) {
         if (nameInput) nameInput.value = template.nome;
         if (urlInput && template.imagem_url) urlInput.value = template.imagem_url;
 
-        // Try to auto-select category based on template data
-        if (template.categoria) {
+        // Auto-seleciona categoria baseado no template
+        if (template.categoria && template.subcategoria) {
             const genSelect = document.getElementById('sf-general');
+            const catSelect = document.getElementById('sf-category');
+            const subSelect = document.getElementById('sf-subcategory');
+
+            // 1. Encontra a categoria geral correspondente
             if (genSelect) {
-                // Find matching general
+                let found = false;
                 for (const gen of APP_STATE.generalCategories) {
-                    if (template.categoria.toLowerCase().includes(gen.nome.toLowerCase()) ||
-                        gen.nome.toLowerCase().includes(template.categoria.toLowerCase())) {
+                    if (template.categoria.includes(gen.nome) || gen.nome.includes(template.categoria)) {
                         genSelect.value = String(gen.id);
                         genSelect.dispatchEvent(new Event('change'));
+                        found = true;
                         break;
                     }
                 }
+                if (!found) {
+                    // Tenta match parcial
+                    for (const gen of APP_STATE.generalCategories) {
+                        if (template.categoria.toLowerCase().includes(gen.nome.toLowerCase().slice(0, 4)) ||
+                            gen.nome.toLowerCase().includes(template.categoria.toLowerCase().slice(0, 4))) {
+                            genSelect.value = String(gen.id);
+                            genSelect.dispatchEvent(new Event('change'));
+                            break;
+                        }
+                    }
+                }
             }
+
+            // 2. Aguarda o DOM atualizar e seleciona subcategoria
+            setTimeout(() => {
+                const catSelect2 = document.getElementById('sf-category');
+                const subSelect2 = document.getElementById('sf-subcategory');
+                if (subSelect2 && template.subcategoria) {
+                    for (const opt of subSelect2.options) {
+                        if (opt.textContent.trim().toLowerCase() === template.subcategoria.toLowerCase()) {
+                            subSelect2.value = opt.value;
+                            subSelect2.dispatchEvent(new Event('change'));
+                            break;
+                        }
+                    }
+                }
+                // 3. Se nao achou sub, tenta categoria nivel 2
+                if (catSelect2 && subSelect2 && subSelect2.value === '0' && template.subcategoria) {
+                    for (const opt of catSelect2.options) {
+                        if (opt.textContent.trim().toLowerCase() === template.subcategoria.toLowerCase()) {
+                            catSelect2.value = opt.value;
+                            catSelect2.dispatchEvent(new Event('change'));
+                            break;
+                        }
+                    }
+                }
+            }, 100);
         }
+
         showToast('✅ Template carregado! Ajuste os preços e publique.', 'success');
     });
 
