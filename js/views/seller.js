@@ -143,59 +143,103 @@ async function openSellerItemForm(itemId = null) {
         if (urlInput && template.imagem_url) urlInput.value = template.imagem_url;
 
         // Auto-seleciona categoria baseado no template
-        if (template.categoria && template.subcategoria) {
+        if (template.categoria) {
             const genSelect = document.getElementById('sf-general');
-            const catSelect = document.getElementById('sf-category');
-            const subSelect = document.getElementById('sf-subcategory');
+            if (!genSelect) return;
 
-            // 1. Encontra a categoria geral correspondente
-            if (genSelect) {
-                let found = false;
-                for (const gen of APP_STATE.generalCategories) {
-                    if (template.categoria.includes(gen.nome) || gen.nome.includes(template.categoria)) {
-                        genSelect.value = String(gen.id);
-                        genSelect.dispatchEvent(new Event('change'));
-                        found = true;
+            // Mapa de templates para categorias do site
+            const categoryMap = {
+                'Armas': { general: 'Armas', category: null, subcategory: null },
+                'Armadura de Tecido': { general: 'Armadura', category: 'Armadura de Tecido', subcategory: null },
+                'Armadura Leve': { general: 'Armadura', category: 'Armadura Leve', subcategory: null },
+                'Armadura Pesada': { general: 'Armadura', category: 'Armadura Pesada', subcategory: null },
+                'Acessórios': { general: 'Acessórios', category: null, subcategory: null },
+                'Consumíveis': { general: 'Consumíveis', category: null, subcategory: null },
+                'Relíquias': { general: 'Relíquias', category: null, subcategory: null },
+                'Aprimoramentos': { general: 'Aprimoramentos', category: null, subcategory: null },
+            };
+
+            let mapping = categoryMap[template.categoria];
+            if (!mapping) {
+                // Fallback: tenta match parcial
+                for (const [key, val] of Object.entries(categoryMap)) {
+                    if (template.categoria.includes(key) || key.includes(template.categoria)) {
+                        mapping = val;
                         break;
                     }
                 }
-                if (!found) {
-                    // Tenta match parcial
-                    for (const gen of APP_STATE.generalCategories) {
-                        if (template.categoria.toLowerCase().includes(gen.nome.toLowerCase().slice(0, 4)) ||
-                            gen.nome.toLowerCase().includes(template.categoria.toLowerCase().slice(0, 4))) {
-                            genSelect.value = String(gen.id);
-                            genSelect.dispatchEvent(new Event('change'));
-                            break;
-                        }
+            }
+            if (!mapping) mapping = { general: template.categoria, category: null, subcategory: null };
+
+            // 1. Set general
+            let genId = null;
+            for (const gen of APP_STATE.generalCategories) {
+                if (gen.nome.toLowerCase() === mapping.general.toLowerCase()) {
+                    genId = gen.id;
+                    break;
+                }
+            }
+            if (!genId) {
+                for (const gen of APP_STATE.generalCategories) {
+                    if (gen.nome.toLowerCase().includes(mapping.general.toLowerCase()) ||
+                        mapping.general.toLowerCase().includes(gen.nome.toLowerCase())) {
+                        genId = gen.id;
+                        break;
                     }
                 }
             }
 
-            // 2. Aguarda o DOM atualizar e seleciona subcategoria
-            setTimeout(() => {
-                const catSelect2 = document.getElementById('sf-category');
-                const subSelect2 = document.getElementById('sf-subcategory');
-                if (subSelect2 && template.subcategoria) {
-                    for (const opt of subSelect2.options) {
+            if (genId) {
+                genSelect.value = String(genId);
+                genSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            // 2. Set category (nivel 2) and subcategory (nivel 3) after DOM updates
+            function setSubLevels(attempt) {
+                const catSel = document.getElementById('sf-category');
+                const subSel = document.getElementById('sf-subcategory');
+
+                // Try to match subcategory first (nivel 3)
+                if (subSel && template.subcategoria) {
+                    for (const opt of subSel.options) {
                         if (opt.textContent.trim().toLowerCase() === template.subcategoria.toLowerCase()) {
-                            subSelect2.value = opt.value;
-                            subSelect2.dispatchEvent(new Event('change'));
-                            break;
+                            subSel.value = opt.value;
+                            subSel.dispatchEvent(new Event('change', { bubbles: true }));
+                            return;
                         }
                     }
                 }
-                // 3. Se nao achou sub, tenta categoria nivel 2
-                if (catSelect2 && subSelect2 && subSelect2.value === '0' && template.subcategoria) {
-                    for (const opt of catSelect2.options) {
-                        if (opt.textContent.trim().toLowerCase() === template.subcategoria.toLowerCase()) {
-                            catSelect2.value = opt.value;
-                            catSelect2.dispatchEvent(new Event('change'));
-                            break;
+
+                // If subcategory not found, try category (nivel 2)
+                const targetCat = mapping.category || template.subcategoria;
+                if (catSel && targetCat) {
+                    for (const opt of catSel.options) {
+                        if (opt.textContent.trim().toLowerCase() === targetCat.toLowerCase()) {
+                            catSel.value = opt.value;
+                            catSel.dispatchEvent(new Event('change', { bubbles: true }));
+                            // Now try subcategory again
+                            setTimeout(() => {
+                                const subSel2 = document.getElementById('sf-subcategory');
+                                if (subSel2 && template.subcategoria && template.subcategoria !== targetCat) {
+                                    for (const opt of subSel2.options) {
+                                        if (opt.textContent.trim().toLowerCase() === template.subcategoria.toLowerCase()) {
+                                            subSel2.value = opt.value;
+                                            subSel2.dispatchEvent(new Event('change', { bubbles: true }));
+                                            return;
+                                        }
+                                    }
+                                }
+                            }, 150);
+                            return;
                         }
                     }
                 }
-            }, 100);
+
+                // Retry if selects haven't loaded yet
+                if (attempt < 3) setTimeout(() => setSubLevels(attempt + 1), 200);
+            }
+
+            setTimeout(() => setSubLevels(0), 150);
         }
 
         showToast('✅ Template carregado! Ajuste os preços e publique.', 'success');
