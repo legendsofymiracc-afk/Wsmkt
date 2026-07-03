@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mercado-ws-v16-outfit-preload-cache';
+const CACHE_NAME = 'mercado-ws-v17-static-api-fallback-cache';
 const ASSETS = [
   '/', '/index.html',
   '/css/style.css', '/css/animations.css',
@@ -6,7 +6,8 @@ const ASSETS = [
   '/js/components/utils.js', '/js/components/toast.js', '/js/components/modal.js', '/js/components/panel.js',
   '/js/views/home.js', '/js/views/categories.js', '/js/views/items.js', '/js/views/admin.js', '/js/views/seller.js',
   '/images/favorito.png', '/images/cantoneira.png', '/images/fundo.png', '/images/wsdb_slot_frame.png',
-  '/images/uploads/gold_coin.png', '/images/uploads/mercado.png', '/images/uploads/administrativo.png'
+  '/images/uploads/gold_coin.png', '/images/uploads/mercado.png', '/images/uploads/administrativo.png',
+  '/database/categories.tree.json', '/database/items.static.json', '/database/settings.public.json'
 ];
 
 self.addEventListener('install', e => {

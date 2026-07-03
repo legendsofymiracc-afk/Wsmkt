@@ -1,0 +1,789 @@
+[
+  {
+    "id": 79,
+    "id_pai": 0,
+    "nome": "Pacotes de iniciante",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2306.webp",
+    "filhos": []
+  },
+  {
+    "id": 80,
+    "id_pai": 0,
+    "nome": "Armas",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/1423.webp",
+    "filhos": [
+      {
+        "id": 81,
+        "id_pai": 80,
+        "nome": "Adagas",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1106.webp",
+        "filhos": []
+      },
+      {
+        "id": 82,
+        "id_pai": 80,
+        "nome": "Espadas de uma mão",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1423.webp",
+        "filhos": []
+      },
+      {
+        "id": 83,
+        "id_pai": 80,
+        "nome": "Espadas de duas mãos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1391.webp",
+        "filhos": []
+      },
+      {
+        "id": 84,
+        "id_pai": 80,
+        "nome": "Machados de uma mão",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1049.webp",
+        "filhos": []
+      },
+      {
+        "id": 85,
+        "id_pai": 80,
+        "nome": "Machados de duas mãos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1037.webp",
+        "filhos": []
+      },
+      {
+        "id": 86,
+        "id_pai": 80,
+        "nome": "Maças de uma mão",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1115.webp",
+        "filhos": []
+      },
+      {
+        "id": 87,
+        "id_pai": 80,
+        "nome": "Maças de duas mãos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1091.webp",
+        "filhos": []
+      },
+      {
+        "id": 88,
+        "id_pai": 80,
+        "nome": "Lanças",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1217.webp",
+        "filhos": []
+      },
+      {
+        "id": 89,
+        "id_pai": 80,
+        "nome": "Escudos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1202.webp",
+        "filhos": []
+      },
+      {
+        "id": 90,
+        "id_pai": 80,
+        "nome": "Cajados",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1235.webp",
+        "filhos": []
+      },
+      {
+        "id": 91,
+        "id_pai": 80,
+        "nome": "Arcos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1076.webp",
+        "filhos": []
+      },
+      {
+        "id": 92,
+        "id_pai": 80,
+        "nome": "Bestas",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1376.webp",
+        "filhos": []
+      }
+    ]
+  },
+  {
+    "id": 93,
+    "id_pai": 0,
+    "nome": "Armadura",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/1620.webp",
+    "filhos": [
+      {
+        "id": 94,
+        "id_pai": 93,
+        "nome": "Armadura de tecido",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1533.webp",
+        "filhos": [
+          {
+            "id": 95,
+            "id_pai": 94,
+            "nome": "Cabeça",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1313.webp",
+            "filhos": []
+          },
+          {
+            "id": 96,
+            "id_pai": 94,
+            "nome": "Tronco",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1527.webp",
+            "filhos": []
+          },
+          {
+            "id": 97,
+            "id_pai": 94,
+            "nome": "Mãos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1453.webp",
+            "filhos": []
+          },
+          {
+            "id": 98,
+            "id_pai": 94,
+            "nome": "Cintura",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/974.webp",
+            "filhos": []
+          },
+          {
+            "id": 99,
+            "id_pai": 94,
+            "nome": "Pernas",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1698.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 100,
+        "id_pai": 93,
+        "nome": "Armadura leve",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1602.webp",
+        "filhos": [
+          {
+            "id": 101,
+            "id_pai": 100,
+            "nome": "Cabeça",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1647.webp",
+            "filhos": []
+          },
+          {
+            "id": 102,
+            "id_pai": 100,
+            "nome": "Tronco",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1602.webp",
+            "filhos": []
+          },
+          {
+            "id": 103,
+            "id_pai": 100,
+            "nome": "Mãos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1479.webp",
+            "filhos": []
+          },
+          {
+            "id": 104,
+            "id_pai": 100,
+            "nome": "Cintura",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/980.webp",
+            "filhos": []
+          },
+          {
+            "id": 105,
+            "id_pai": 100,
+            "nome": "Pernas",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1725.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 106,
+        "id_pai": 93,
+        "nome": "Armadura pesada",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1277.webp",
+        "filhos": [
+          {
+            "id": 107,
+            "id_pai": 106,
+            "nome": "Cabeça",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1283.webp",
+            "filhos": []
+          },
+          {
+            "id": 108,
+            "id_pai": 106,
+            "nome": "Tronco",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1268.webp",
+            "filhos": []
+          },
+          {
+            "id": 109,
+            "id_pai": 106,
+            "nome": "Mãos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1497.webp",
+            "filhos": []
+          },
+          {
+            "id": 110,
+            "id_pai": 106,
+            "nome": "Cintura",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/995.webp",
+            "filhos": []
+          },
+          {
+            "id": 111,
+            "id_pai": 106,
+            "nome": "Pernas",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1722.webp",
+            "filhos": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 112,
+    "id_pai": 0,
+    "nome": "Aprimoramentos",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2250.webp",
+    "filhos": [
+      {
+        "id": 113,
+        "id_pai": 112,
+        "nome": "Cristais",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2270.webp",
+        "filhos": [
+          {
+            "id": 114,
+            "id_pai": 113,
+            "nome": "Cristas milagrosos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2047.webp",
+            "filhos": []
+          },
+          {
+            "id": 115,
+            "id_pai": 113,
+            "nome": "Cristais comuns",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/1954.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 116,
+        "id_pai": 112,
+        "nome": "Runas",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2269.webp",
+        "filhos": [
+          {
+            "id": 117,
+            "id_pai": 116,
+            "nome": "Runas milagrosas",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2250.webp",
+            "filhos": []
+          },
+          {
+            "id": 118,
+            "id_pai": 116,
+            "nome": "Runas comuns",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/570.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 119,
+        "id_pai": 112,
+        "nome": "Amplificação",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2238.webp",
+        "filhos": []
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "id_pai": 0,
+    "nome": "Trajes luxuosos",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/1779.webp",
+    "filhos": []
+  },
+  {
+    "id": 121,
+    "id_pai": 0,
+    "nome": "Utilidades",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/1869.webp",
+    "filhos": []
+  },
+  {
+    "id": 122,
+    "id_pai": 0,
+    "nome": "Acessórios",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/1758.webp",
+    "filhos": [
+      {
+        "id": 123,
+        "id_pai": 122,
+        "nome": "Capotes",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1581.webp",
+        "filhos": []
+      },
+      {
+        "id": 124,
+        "id_pai": 122,
+        "nome": "Anéis",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1154.webp",
+        "filhos": []
+      },
+      {
+        "id": 125,
+        "id_pai": 122,
+        "nome": "Amuletos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1758.webp",
+        "filhos": []
+      },
+      {
+        "id": 126,
+        "id_pai": 122,
+        "nome": "Braceletes",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/7223.webp",
+        "filhos": []
+      }
+    ]
+  },
+  {
+    "id": 127,
+    "id_pai": 0,
+    "nome": "Consumíveis",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2173.webp",
+    "filhos": [
+      {
+        "id": 128,
+        "id_pai": 127,
+        "nome": "Alimento",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/622.webp",
+        "filhos": [
+          {
+            "id": 129,
+            "id_pai": 128,
+            "nome": "Alimentos milagrosos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/622.webp",
+            "filhos": []
+          },
+          {
+            "id": 130,
+            "id_pai": 128,
+            "nome": "Alimentos comuns",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/946.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 131,
+        "id_pai": 127,
+        "nome": "Poções",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2173.webp",
+        "filhos": [
+          {
+            "id": 132,
+            "id_pai": 131,
+            "nome": "Poções milagrosas",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2173.webp",
+            "filhos": []
+          },
+          {
+            "id": 133,
+            "id_pai": 131,
+            "nome": "Poções comuns",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2104.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 134,
+        "id_pai": 127,
+        "nome": "Pergaminhos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2183.webp",
+        "filhos": [
+          {
+            "id": 135,
+            "id_pai": 134,
+            "nome": "Pergaminhos milagrosos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2183.webp",
+            "filhos": []
+          },
+          {
+            "id": 136,
+            "id_pai": 134,
+            "nome": "Pergaminhos comuns",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/404.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 137,
+        "id_pai": 127,
+        "nome": "Artefatos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/7224.webp",
+        "filhos": [
+          {
+            "id": 138,
+            "id_pai": 137,
+            "nome": "Artefato de instalação",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/7226.webp",
+            "filhos": []
+          },
+          {
+            "id": 139,
+            "id_pai": 137,
+            "nome": "Artefato de evocação",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/7225.webp",
+            "filhos": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 140,
+    "id_pai": 0,
+    "nome": "Baús",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2244.webp",
+    "filhos": []
+  },
+  {
+    "id": 141,
+    "id_pai": 0,
+    "nome": "Saquear",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/915.webp",
+    "filhos": []
+  },
+  {
+    "id": 142,
+    "id_pai": 0,
+    "nome": "Visuais decorativos",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2674.webp",
+    "filhos": [
+      {
+        "id": 143,
+        "id_pai": 142,
+        "nome": "Armas de uma mão",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1423.webp",
+        "filhos": []
+      },
+      {
+        "id": 144,
+        "id_pai": 142,
+        "nome": "Armas corpo a corpo de duas mãos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1037.webp",
+        "filhos": []
+      },
+      {
+        "id": 145,
+        "id_pai": 142,
+        "nome": "Cajados",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1229.webp",
+        "filhos": []
+      },
+      {
+        "id": 146,
+        "id_pai": 142,
+        "nome": "Arcos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1076.webp",
+        "filhos": []
+      },
+      {
+        "id": 147,
+        "id_pai": 142,
+        "nome": "Bestas",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1367.webp",
+        "filhos": []
+      },
+      {
+        "id": 148,
+        "id_pai": 142,
+        "nome": "Escudos",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/1202.webp",
+        "filhos": []
+      },
+      {
+        "id": 149,
+        "id_pai": 142,
+        "nome": "Pergaminho da Purificação",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2684.webp",
+        "filhos": []
+      }
+    ]
+  },
+  {
+    "id": 150,
+    "id_pai": 0,
+    "nome": "Lacaios",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2729.webp",
+    "filhos": []
+  },
+  {
+    "id": 151,
+    "id_pai": 0,
+    "nome": "Recursos",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2915.webp",
+    "filhos": [
+      {
+        "id": 152,
+        "id_pai": 151,
+        "nome": "Essências",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/2963.webp",
+        "filhos": []
+      },
+      {
+        "id": 153,
+        "id_pai": 151,
+        "nome": "Catalizadores",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/235.webp",
+        "filhos": []
+      },
+      {
+        "id": 154,
+        "id_pai": 151,
+        "nome": "Recursos de artesanato",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/3286.webp",
+        "filhos": [
+          {
+            "id": 155,
+            "id_pai": 154,
+            "nome": "Armas de longo alcance",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2871.webp",
+            "filhos": []
+          },
+          {
+            "id": 156,
+            "id_pai": 154,
+            "nome": "Armas corpo a corpo",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2872.webp",
+            "filhos": []
+          },
+          {
+            "id": 157,
+            "id_pai": 154,
+            "nome": "Armadura de tecido",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2873.webp",
+            "filhos": []
+          },
+          {
+            "id": 158,
+            "id_pai": 154,
+            "nome": "Armadura leve",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2869.webp",
+            "filhos": []
+          },
+          {
+            "id": 159,
+            "id_pai": 154,
+            "nome": "Armadura pesada",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2868.webp",
+            "filhos": []
+          },
+          {
+            "id": 160,
+            "id_pai": 154,
+            "nome": "Anéis",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/2866.webp",
+            "filhos": []
+          },
+          {
+            "id": 161,
+            "id_pai": 154,
+            "nome": "Amuletos",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/3213.webp",
+            "filhos": []
+          },
+          {
+            "id": 162,
+            "id_pai": 154,
+            "nome": "Capotes",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/3214.webp",
+            "filhos": []
+          },
+          {
+            "id": 163,
+            "id_pai": 154,
+            "nome": "Braceletes",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/7112.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 164,
+        "id_pai": 151,
+        "nome": "Recursos do castelo",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/4066.webp",
+        "filhos": [
+          {
+            "id": 165,
+            "id_pai": 164,
+            "nome": "Progressão",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/880.webp",
+            "filhos": []
+          },
+          {
+            "id": 166,
+            "id_pai": 164,
+            "nome": "Produção",
+            "nivel": 3,
+            "imagem_url": "images/uploads/wsdb_categories/643.webp",
+            "filhos": []
+          }
+        ]
+      },
+      {
+        "id": 167,
+        "id_pai": 151,
+        "nome": "Substâncias",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/4524.webp",
+        "filhos": []
+      }
+    ]
+  },
+  {
+    "id": 168,
+    "id_pai": 0,
+    "nome": "Livros de habilidade",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/2848.webp",
+    "filhos": []
+  },
+  {
+    "id": 169,
+    "id_pai": 0,
+    "nome": "Sorrisos",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/3116.webp",
+    "filhos": []
+  },
+  {
+    "id": 170,
+    "id_pai": 0,
+    "nome": "Relíquias",
+    "nivel": 1,
+    "imagem_url": "images/uploads/wsdb_categories/3699.webp",
+    "filhos": [
+      {
+        "id": 171,
+        "id_pai": 170,
+        "nome": "Aprimoramento",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/3700.webp",
+        "filhos": []
+      },
+      {
+        "id": 172,
+        "id_pai": 170,
+        "nome": "Ataque",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/3671.webp",
+        "filhos": []
+      },
+      {
+        "id": 173,
+        "id_pai": 170,
+        "nome": "Defesa",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/3677.webp",
+        "filhos": []
+      },
+      {
+        "id": 174,
+        "id_pai": 170,
+        "nome": "Grupo",
+        "nivel": 2,
+        "imagem_url": "images/uploads/wsdb_categories/4397.webp",
+        "filhos": []
+      }
+    ]
+  }
+]
