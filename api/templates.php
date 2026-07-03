@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/routes.php';
+require_once __DIR__ . '/skin_image_resolver.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
@@ -8,7 +9,7 @@ switch ($method) {
     case 'GET':
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-        $limit = isset($_GET['limit']) ? min((int)$_GET['limit'], 50) : 20;
+        $limit = isset($_GET['limit']) ? max(1, min((int)$_GET['limit'], 50)) : 20;
 
         // Detalhe de um template específico
         if ($id > 0) {
@@ -16,6 +17,7 @@ switch ($method) {
             $stmt->execute([$id]);
             $template = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($template) {
+                $template = applySkinImageToTemplateRow($template);
                 $template['atributos'] = json_decode($template['atributos'] ?: '{}', true);
             }
             echo json_encode($template ?: null);
@@ -23,15 +25,29 @@ switch ($method) {
         }
 
         if (strlen($search) >= 2) {
-            $stmt = $db->prepare('SELECT * FROM templates WHERE nome LIKE ? COLLATE NOCASE ORDER BY nome LIMIT ?');
-            $stmt->execute(['%' . $search . '%', $limit]);
+            $stmt = $db->prepare('
+                SELECT *
+                FROM templates
+                WHERE nome LIKE ? COLLATE NOCASE
+                ORDER BY
+                    CASE
+                        WHEN nome = ? COLLATE NOCASE THEN 0
+                        WHEN nome LIKE ? COLLATE NOCASE THEN 1
+                        WHEN categoria LIKE ? COLLATE NOCASE THEN 2
+                        ELSE 3
+                    END,
+                    nome
+                LIMIT ?
+            ');
+            $stmt->execute(['%' . $search . '%', $search, $search . '%', '%Trajes%', $limit]);
         } elseif (!empty($search) && strlen($search) === 1) {
             echo json_encode([]);
             exit;
         } else {
             $stmt = $db->query('SELECT * FROM templates ORDER BY nome LIMIT ' . $limit);
         }
-        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $rows = array_map('applySkinImageToTemplateRow', $stmt->fetchAll(PDO::FETCH_ASSOC));
+        echo json_encode($rows);
         break;
 
     case 'POST':

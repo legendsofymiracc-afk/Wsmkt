@@ -1,6 +1,13 @@
 node_modules/
 package-lock.json
-node_modules/\npackage-lock.json\nscrape_*.js\n*.js\n!js/**/*.js\n!api/**/*.php
+.playwright-cli/
+output/
+cache/
+.claude/
+.agents/
+.superpowers/
+wsdb_data/
 scrape_*.js
+wsdb_*.js
 database/*.db-shm
 database/*.db-wal

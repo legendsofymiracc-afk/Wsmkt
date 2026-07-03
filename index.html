@@ -5,33 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Mercado Warspear - Compre e venda itens do jogo">
     <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' http://127.0.0.1:8080 https:; frame-src 'none'; object-src 'none'; base-uri 'self';">
     <meta property="og:title" content="Mercado Warspear">
     <meta property="og:description" content="Catálogo de itens do Warspear Online">
     <meta property="og:image" content="images/uploads/mercado.png">
     <meta property="og:type" content="website">
     <title id="page-title">Mercado Warspear</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffd700">
+    <link rel="icon" href="images/uploads/gold_coin.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css?v=20260702-outfit-preload-cache">
     <link rel="stylesheet" href="css/animations.css" media="print" onload="this.media='all'">
 </head>
 <body>
     <div id="app"></div>
     <nav class="mobile-nav" id="mobile-nav">
-        <button onclick="navigateTo('home')" title="Home">🏠</button>
-        <button onclick="navigateTo('general-categories')" title="Categorias">📋</button>
-        <button onclick="scrollToTop()" title="Voltar ao topo">⬆️</button>
+        <button onclick="navigateTo('home')" title="Home">Início</button>
+        <button onclick="navigateTo('general-categories')" title="Categorias">Catálogo</button>
+        <button id="mobile-nav-favorites" onclick="navigateTo('favorites')" title="Favoritos" hidden>Favoritos</button>
+        <button id="mobile-nav-cart" onclick="navigateTo('cart')" title="Carrinho" hidden>Carrinho</button>
+        <button onclick="scrollToTop()" title="Voltar ao topo">Topo</button>
     </nav>
-    <script src="js/api.js" defer></script>
+    <script src="js/api.js?v=20260630-auth-roles2" defer></script>
     <script src="js/components/utils.js" defer></script>
     <script src="js/components/toast.js" defer></script>
     <script src="js/components/modal.js" defer></script>
     <script src="js/components/panel.js" defer></script>
     <script src="js/views/categories.js" defer></script>
-    <script src="js/views/items.js" defer></script>
-    <script src="js/views/home.js" defer></script>
-    <script src="js/views/search.js" defer></script>
-    <script src="js/views/admin.js" defer></script>
-    <script src="js/views/seller.js" defer></script>
-    <script src="js/app.js" defer></script>
+    <script src="js/views/items.js?v=20260702-outfit-preload-cache" defer></script>
+    <script src="js/views/home.js?v=20260630-auth-roles2" defer></script>
+    <script src="js/views/admin.js?v=20260630-auth-roles2" defer></script>
+    <script src="js/views/seller.js?v=20260630-auth-roles2" defer></script>
+    <script src="js/i18n.js" defer></script>
+    <script src="js/views/legal.js" defer></script>
+    <script src="js/app.js?v=20260630-auth-roles2" defer></script>
+    <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js?v=20260702-outfit-preload-cache')}</script>
 </body>
 </html>
-

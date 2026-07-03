@@ -1,7 +1,7 @@
 // js/components/panel.js
 
 function renderPanel(title, bodyHTML, footerHTML, showBack = true) {
-    const backButton = showBack ? `<button class="back-button" onclick="goBack()">←</button>` : '';
+    const backButton = showBack ? '<button class="back-button" onclick="goBack()" aria-label="Voltar">&larr;</button>' : '';
     return `
         <section class="panel" role="dialog">
             <div class="corner top-left"></div>

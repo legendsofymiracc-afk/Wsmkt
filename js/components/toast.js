@@ -13,7 +13,7 @@ function showToast(message, type = 'info', timeout = 3000) {
     const container = document.querySelector('.toast-container');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.textContent = message;
+    toast.textContent = window.I18N ? I18N.translatePhrase(message) : message;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), timeout);
 }

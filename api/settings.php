@@ -9,7 +9,12 @@ $allowedKeys = ['corner_image_url', 'whatsapp_number', 'email_master']; // não 
 switch ($method) {
     case 'GET':
         $config = [];
-        foreach ($allowedKeys as $k) {
+        // email_master só é retornado para admin autenticado
+        $keysForResponse = $allowedKeys;
+        if (!isAdmin()) {
+            $keysForResponse = array_diff($keysForResponse, ['email_master']);
+        }
+        foreach ($keysForResponse as $k) {
             $config[$k] = getSetting($k, $k === 'corner_image_url' ? DEFAULT_CORNER_IMAGE : '');
         }
         echo json_encode($config);
@@ -32,6 +37,22 @@ switch ($method) {
 
         // Atualização opcional da senha do admin
         if (!empty($data['new_admin_password'])) {
+            // Exige senha atual para trocar (previne troca não autorizada em sessão desbloqueada)
+            if (empty($data['current_password'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Senha atual é obrigatória para alterar a senha']);
+                break;
+            }
+            $db = getDB();
+            $stmt = $db->prepare("SELECT senha_hash FROM usuarios WHERE papel = 'dono' LIMIT 1");
+            $stmt->execute();
+            $currentHash = $stmt->fetchColumn();
+            if (!$currentHash || !password_verify((string)$data['current_password'], $currentHash)) {
+                http_response_code(403);
+                echo json_encode(['error' => 'Senha atual incorreta']);
+                break;
+            }
+
             $newPass = (string)$data['new_admin_password'];
             if (strlen($newPass) < 6) {
                 http_response_code(400);
@@ -40,7 +61,6 @@ switch ($method) {
             }
             $hash = password_hash($newPass, PASSWORD_DEFAULT);
             // Atualizar também na tabela usuarios (nova estrutura)
-            $db = getDB();
             $stmt = $db->prepare("UPDATE usuarios SET senha_hash = ?, senha_trocada = 1 WHERE papel = 'dono' LIMIT 1");
             $stmt->execute([$hash]);
             // Mantém compatibilidade com código antigo

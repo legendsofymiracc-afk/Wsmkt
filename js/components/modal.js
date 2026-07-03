@@ -9,6 +9,7 @@ function renderModal(innerHTML) {
         if (event.target === overlay) closeModal();
     });
     document.body.appendChild(overlay);
+    if (typeof applyI18n === 'function') applyI18n(overlay);
 }
 
 function closeModal() {

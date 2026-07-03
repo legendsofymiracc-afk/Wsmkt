@@ -1,5 +1,12 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/routes.php';
+
+// Apenas admin pode aplicar seed de categorias
+if (!isAdmin()) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Acesso restrito ao administrador']);
+    exit();
+}
 
 header('Content-Type: application/json; charset=utf-8');
 

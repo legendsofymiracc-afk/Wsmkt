@@ -11,11 +11,6 @@ function checkRateLimit(): void {
     $maxRequests = 30;
 
     $db = getDB();
-    $db->exec('CREATE TABLE IF NOT EXISTS rate_limits (
-        chave TEXT PRIMARY KEY,
-        contagem INTEGER DEFAULT 0,
-        janela_inicio INTEGER DEFAULT 0
-    )');
 
     $db->beginTransaction();
     try {
@@ -56,8 +51,8 @@ function verifyCsrfToken(): bool {
     if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         return true;
     }
-    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($_POST['csrf_token'] ?? '');
-    return !empty($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    return !empty($_SESSION['csrf_token']) && !empty($token) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 // Headers de segurança
@@ -65,14 +60,71 @@ function sendSecurityHeaders(): void {
     header('Content-Type: application/json; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: DENY');
-    header('Access-Control-Allow-Origin: *');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('X-Permitted-Cross-Domain-Policies: none');
+
+    // CORS: restrito em produção, permissivo em dev local
+    $requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $origin = $requestOrigin ?: ($_SERVER['HTTP_HOST'] ?? '');
+    $isLocal = (
+        strpos($origin, '127.0.0.1') !== false ||
+        strpos($origin, 'localhost') !== false ||
+        strpos($origin, 'file://') !== false ||
+        empty($origin)
+    );
+    if ($isLocal) {
+        if ($requestOrigin !== '') {
+            header('Access-Control-Allow-Origin: ' . $requestOrigin);
+            header('Access-Control-Allow-Credentials: true');
+            header('Vary: Origin');
+        } else {
+            header('Access-Control-Allow-Origin: *');
+        }
+    } else {
+        // Em produção, whitelist explícita de origens permitidas
+        $requestHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $allowedOrigins = [
+            'https://' . $requestHost,
+            'https://www.' . $requestHost,
+        ];
+        if (in_array($requestOrigin, $allowedOrigins, true)) {
+            header('Access-Control-Allow-Origin: ' . $requestOrigin);
+            header('Access-Control-Allow-Credentials: true');
+            header('Vary: Origin');
+        } else {
+            // Fallback: permite mesma origem (navegadores modernos respeitam)
+            header('Access-Control-Allow-Origin: https://' . $requestHost);
+        }
+    }
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
+}
+
+// Timeout de sessão por inatividade (30 minutos)
+// Só se aplica a usuários autenticados; endpoints públicos não são afetados
+function enforceSessionTimeout(int $timeoutSeconds = 1800): void {
+    if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] <= 0) {
+        return; // Não autenticado, nada a expirar
+    }
+    $now = time();
+    $lastActivity = $_SESSION['last_activity'] ?? 0;
+    if ($lastActivity > 0 && ($now - $lastActivity) > $timeoutSeconds) {
+        // Sessão expirada — destrói e exige novo login
+        $_SESSION = [];
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+        http_response_code(401);
+        echo json_encode(['error' => 'Sessão expirada por inatividade. Faça login novamente.']);
+        exit();
+    }
+    $_SESSION['last_activity'] = $now;
 }
 
 // Aplica proteções
 checkRateLimit();
 sendSecurityHeaders();
+enforceSessionTimeout();
 
 // Verificar CSRF em métodos que alteram estado
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {

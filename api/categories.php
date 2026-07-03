@@ -103,15 +103,18 @@ switch ($method) {
         $stmt = $db->prepare('UPDATE categorias SET imagem_url = ? WHERE id = ?');
         $stmt->execute([$newImage, $id]);
 
-        // Se a imagem antiga era um upload local, remove o arquivo
+        // Se a imagem antiga era um upload local, remove o arquivo (com proteção contra path traversal)
         try {
             if ($oldImage && $oldImage !== $newImage) {
                 $normalized = str_replace('\\', '/', $oldImage);
-                if (preg_match('#^(?:\./|\../)?images/uploads/#', $normalized)) {
-                    $relative = preg_replace('#^(?:\./|\../)#', '', $normalized);
+                if (preg_match('#^(?:\./|\.\./)?images/uploads/#', $normalized)) {
+                    $relative = preg_replace('#^(?:\./|\.\./)#', '', $normalized);
                     $fullPath = __DIR__ . '/../' . $relative;
-                    if (is_file($fullPath)) {
-                        @unlink($fullPath);
+                    // Verifica com realpath para prevenir path traversal (ex: ../../../etc/passwd)
+                    $realPath = realpath($fullPath);
+                    $uploadsDir = realpath(__DIR__ . '/../images/uploads');
+                    if ($realPath !== false && $uploadsDir !== false && strpos($realPath, $uploadsDir) === 0 && is_file($realPath)) {
+                        @unlink($realPath);
                     }
                 }
             }

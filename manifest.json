@@ -1,0 +1,13 @@
+{
+  "name": "Mercado Warspear",
+  "short_name": "Mercado WS",
+  "description": "Catálogo de itens do Warspear Online",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#ffd700",
+  "icons": [
+    {"src": "images/favorito.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "images/uploads/gold_coin.png", "sizes": "32x32", "type": "image/png"}
+  ]
+}
