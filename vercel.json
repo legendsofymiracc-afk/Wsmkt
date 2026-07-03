@@ -1,10 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/texture/:part/:id/:file",
-      "destination": "https://wsdb.xyz/textures/:part/:id/:file"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

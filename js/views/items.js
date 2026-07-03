@@ -673,17 +673,19 @@ const WSDB_TEXTURES = {
 };
 
 function wsdbTextureUrl(part, id, file) {
-    // Dev local: proxy PHP com query params
-    // Producao (Vercel): reverse proxy via path segments → wsdb.xyz/textures/...
+    // Dev local: proxy PHP mesma origem → Canvas tint funciona
+    // Producao: direto do wsdb.xyz (crossOrigin=anonymous tenta CORS, fallback sem tint)
     const isLocal = /^(https?:\/\/)?(127\.0\.0\.1|localhost|file:)/i.test(window.location.origin || '') || window.location.protocol === 'file:';
     if (isLocal) {
         return `api/texture.php?part=${encodeURIComponent(part)}&id=${encodeURIComponent(id)}&file=${encodeURIComponent(file)}&fallback=empty`;
     }
-    return `api/texture/${encodeURIComponent(part)}/${encodeURIComponent(id)}/${encodeURIComponent(file)}.webp`;
+    return `https://wsdb.xyz/textures/${encodeURIComponent(part)}/${encodeURIComponent(id)}/${encodeURIComponent(file)}.webp`;
 }
 
 const WSDB_TEXTURE_CACHE = new Map();
 const WSDB_TINT_CACHE = new Map();
+// Flag global: true se o canvas estiver tainted (cross-origin sem CORS)
+let WSDB_CANVAS_TAINTED = false;
 
 function loadWsdbTexture(part, id, file) {
     const cacheKey = `${part}/${id}/${file}`;
@@ -691,6 +693,8 @@ function loadWsdbTexture(part, id, file) {
     const promise = new Promise(resolve => {
         if (!id) { resolve(null); return; }
         const img = new Image();
+        // crossOrigin tenta habilitar CORS; se wsdb.xyz nao mandar header, canvas fica tainted
+        img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null);
         img.src = wsdbTextureUrl(part, id, file);
@@ -710,7 +714,13 @@ function imageToData(img) {
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
-    return ctx.getImageData(0, 0, img.width, img.height);
+    try {
+        return ctx.getImageData(0, 0, img.width, img.height);
+    } catch (e) {
+        // Canvas tainted por cross-origin → sem CORS no wsdb.xyz
+        WSDB_CANVAS_TAINTED = true;
+        return null;
+    }
 }
 
 function imageDataToImage(data) {
@@ -731,6 +741,11 @@ async function tintWsdbImage(img, color, protectedColors = []) {
     const tintKey = `${img.src}|${Number(color)}|${protectedKey}`;
     if (WSDB_TINT_CACHE.has(tintKey)) return WSDB_TINT_CACHE.get(tintKey);
     const data = imageToData(img);
+    // Canvas tainted (cross-origin sem CORS) → retorna imagem original sem tint
+    if (!data) {
+        WSDB_TINT_CACHE.set(tintKey, img);
+        return img;
+    }
     const protectedSet = new Set(protectedColors.map(c => c.s));
     const shift = colorIntToRgb(Number(color)).map(v => v - 128);
     const snap = [0,15,23,31,39,47,55,63,71,79,87,95,103,111,119,127,135,143,151,159,167,175,183,191,199,207,215,223,231,239,247,255];
@@ -749,7 +764,15 @@ async function tintWsdbImage(img, color, protectedColors = []) {
 }
 
 function replaceSkinColors(ctx, skin) {
-    const data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // Se canvas ja esta tainted, nao tenta getImageData
+    if (WSDB_CANVAS_TAINTED) return;
+    let data;
+    try {
+        data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    } catch (e) {
+        WSDB_CANVAS_TAINTED = true;
+        return;
+    }
     const map = skin.map(c => ({s: c.s, d: colorIntToRgb(c.d)}));
     for (let i = 0; i < data.data.length; i += 4) {
         const key = rgbToInt(data.data[i + 2], data.data[i + 1], data.data[i]);
