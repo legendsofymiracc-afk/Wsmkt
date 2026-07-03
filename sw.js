@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mercado-ws-v17-static-api-fallback-cache';
+const CACHE_NAME = 'mercado-ws-v18-texture-proxy';
 const ASSETS = [
   '/', '/index.html',
   '/css/style.css', '/css/animations.css',
@@ -23,7 +23,21 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
+
+  // Proxy de texturas WSDB: intercepta /api/texture/... e busca em wsdb.xyz
+  // O browser ve como mesma origem → sem CORS no Canvas (tint/recolor)
+  const textureMatch = url.pathname.match(/^\/api\/texture\/(.+)$/);
+  if (textureMatch) {
+    const wsdbUrl = 'https://wsdb.xyz/textures/' + textureMatch[1];
+    e.respondWith(
+      fetch(wsdbUrl).catch(() => new Response(null, { status: 404 }))
+    );
+    return;
+  }
+
+  // Demais /api/ passam direto pra rede (PHP em dev, fallback estatico em prod)
   if (url.pathname.startsWith('/api/')) return;
+
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetched = fetch(e.request).then(response => {
