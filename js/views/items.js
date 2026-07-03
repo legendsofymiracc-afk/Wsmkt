@@ -673,7 +673,10 @@ const WSDB_TEXTURES = {
 };
 
 function wsdbTextureUrl(part, id, file) {
-    return `api/texture.php?part=${encodeURIComponent(part)}&id=${encodeURIComponent(id)}&file=${encodeURIComponent(file)}&fallback=empty`;
+    // Em dev local usa o proxy PHP; em producao (Vercel) usa a serverless function Node.js
+    const isLocal = /^(https?:\/\/)?(127\.0\.0\.1|localhost|file:)/i.test(window.location.origin || '') || window.location.protocol === 'file:';
+    const endpoint = isLocal ? 'api/texture.php' : 'api/texture';
+    return `${endpoint}?part=${encodeURIComponent(part)}&id=${encodeURIComponent(id)}&file=${encodeURIComponent(file)}&fallback=empty`;
 }
 
 const WSDB_TEXTURE_CACHE = new Map();

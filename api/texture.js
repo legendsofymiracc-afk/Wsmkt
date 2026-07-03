@@ -1,78 +1,92 @@
 /**
- * api/texture.js — Vercel Serverless Function
- * Proxy de texturas WSDB (substitui texture.php na Vercel).
- *
- * Busca texturas em https://wsdb.xyz/textures/{part}/{id}/{file}.{format}
- * e retorna como se fossem da mesma origem — evita CORS no Canvas (tint/recolor).
+ * api/texture.js — Vercel Serverless Function (Node.js)
+ * Proxy de texturas WSDB — mesma origem evita CORS no Canvas.
  */
+const https = require('https');
 
-const ALLOWED_PARTS = ['head', 'body', 'hands', 'legs', 'hair', 'helmet', 'ears', 'cape', '1-hand', '2-hand', 'shield', 'bow', 'crossbow'];
+const ALLOWED = new Set(['head','body','hands','legs','hair','helmet','ears','cape','1-hand','2-hand','shield','bow','crossbow']);
 
-// 1×1 pixel PNG transparente (para fallback=empty)
+// 1x1 pixel PNG transparente
 const EMPTY_PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', 'base64');
 
-function sanitize(str, pattern) {
-    return String(str || '').replace(pattern, '');
+function sanitize(str, re) {
+    return String(str || '').replace(re, '');
 }
 
-module.exports = async function handler(req, res) {
-    // Apenas GET
+module.exports = function handler(req, res) {
     if (req.method !== 'GET') {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.writeHead(405, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Method not allowed' }));
         return;
     }
 
-    const { part, id, file, format, fallback } = req.query;
+    const q = req.query || {};
+    const part = sanitize(q.part, /[^a-z0-9-]/gi);
+    const id = parseInt(q.id, 10) || 0;
+    const file = sanitize(q.file, /[^a-z0-9_-]/gi);
+    const fmt = q.format === 'png' ? 'png' : 'webp';
+    const useFallback = q.fallback === 'empty';
 
-    // Validação
-    const safePart = sanitize(part, /[^a-z0-9-]/gi);
-    const safeId = parseInt(id, 10) || 0;
-    const safeFile = sanitize(file, /[^a-z0-9_-]/gi);
-    const safeFormat = format === 'png' ? 'png' : 'webp';
-    const useFallback = fallback === 'empty';
-
-    if (!safePart || safeId <= 0 || !safeFile || !ALLOWED_PARTS.includes(safePart)) {
-        res.status(400).json({ error: 'Invalid parameters' });
+    if (!part || id <= 0 || !file || !ALLOWED.has(part)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid parameters' }));
         return;
     }
 
-    // Fetch da wsdb.xyz
-    const wsdbUrl = `https://wsdb.xyz/textures/${safePart}/${safeId}/${safeFile}.${safeFormat}`;
+    const upstreamPath = `/textures/${part}/${id}/${file}.${fmt}`;
 
-    try {
-        const wsdbRes = await fetch(wsdbUrl, {
-            signal: AbortSignal.timeout(12000),
-            headers: { 'User-Agent': 'MercadoWarspear/1.0' }
-        });
-
-        if (!wsdbRes.ok) {
+    const upstream = https.get({
+        hostname: 'wsdb.xyz',
+        path: upstreamPath,
+        timeout: 12000,
+        headers: { 'User-Agent': 'MercadoWarspear/1.0' }
+    }, (upstreamRes) => {
+        if (upstreamRes.statusCode !== 200) {
             if (useFallback) {
-                res.status(200)
-                    .setHeader('Content-Type', 'image/png')
-                    .setHeader('Cache-Control', 'public, max-age=604800')
-                    .send(EMPTY_PNG);
+                res.writeHead(200, {
+                    'Content-Type': 'image/png',
+                    'Cache-Control': 'public, max-age=604800'
+                });
+                res.end(EMPTY_PNG);
                 return;
             }
-            res.status(404).json({ error: 'Texture not found' });
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Texture not found' }));
             return;
         }
 
-        const buffer = await wsdbRes.arrayBuffer();
-        const contentType = wsdbRes.headers.get('content-type') || `image/${safeFormat}`;
+        const contentType = upstreamRes.headers['content-type'] || `image/${fmt}`;
+        res.writeHead(200, {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=604800, s-maxage=31536000'
+        });
+        upstreamRes.pipe(res);
+    });
 
-        res.status(200)
-            .setHeader('Content-Type', contentType)
-            .setHeader('Cache-Control', 'public, max-age=604800, s-maxage=31536000')
-            .setHeader('Content-Length', buffer.byteLength)
-            .send(Buffer.from(buffer));
-    } catch (err) {
+    upstream.on('error', () => {
         if (useFallback) {
-            res.status(200)
-                .setHeader('Content-Type', 'image/png')
-                .setHeader('Cache-Control', 'public, max-age=604800')
-                .send(EMPTY_PNG);
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                'Cache-Control': 'public, max-age=604800'
+            });
+            res.end(EMPTY_PNG);
             return;
         }
-        res.status(502).json({ error: 'Upstream fetch failed' });
-    }
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Upstream fetch failed' }));
+    });
+
+    upstream.on('timeout', () => {
+        upstream.destroy();
+        if (useFallback) {
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                'Cache-Control': 'public, max-age=604800'
+            });
+            res.end(EMPTY_PNG);
+        } else {
+            res.writeHead(504, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Upstream timeout' }));
+        }
+    });
 };
