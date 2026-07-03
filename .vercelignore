@@ -1,0 +1,9 @@
+# Diretorios de assets offline — nao usados em runtime
+market_item_database_assets/
+
+# Cache e dados de scraping
+cache/
+wsdb_data/
+
+# Dependencias (ja no .gitignore)
+node_modules/

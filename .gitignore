@@ -11,3 +11,6 @@ scrape_*.js
 wsdb_*.js
 database/*.db-shm
 database/*.db-wal
+
+.vercel
+.env*
