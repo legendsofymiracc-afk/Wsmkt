@@ -1,12 +1,9 @@
 {
-  "functions": {
-    "api/texture.js": {
-      "memory": 256,
-      "maxDuration": 15
-    }
-  },
   "rewrites": [
-    { "source": "/api/texture.php", "destination": "/api/texture" }
+    {
+      "source": "/api/texture/:part/:id/:file",
+      "destination": "https://wsdb.xyz/textures/:part/:id/:file"
+    }
   ],
   "headers": [
     {
@@ -15,13 +12,6 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {

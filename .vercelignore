@@ -1,7 +1,0 @@
-# Excluir arquivos PHP da Vercel — eles não executam na plataforma e
-# conflitam com as serverless functions Node.js de mesmo nome.
-api/texture.php
-
-# Cache e dados locais
-cache/
-wsdb_data/

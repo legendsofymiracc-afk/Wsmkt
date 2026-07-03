@@ -673,10 +673,13 @@ const WSDB_TEXTURES = {
 };
 
 function wsdbTextureUrl(part, id, file) {
-    // Em dev local usa o proxy PHP; em producao (Vercel) usa a serverless function Node.js
+    // Dev local: proxy PHP com query params
+    // Producao (Vercel): reverse proxy via path segments → wsdb.xyz/textures/...
     const isLocal = /^(https?:\/\/)?(127\.0\.0\.1|localhost|file:)/i.test(window.location.origin || '') || window.location.protocol === 'file:';
-    const endpoint = isLocal ? 'api/texture.php' : 'api/texture';
-    return `${endpoint}?part=${encodeURIComponent(part)}&id=${encodeURIComponent(id)}&file=${encodeURIComponent(file)}&fallback=empty`;
+    if (isLocal) {
+        return `api/texture.php?part=${encodeURIComponent(part)}&id=${encodeURIComponent(id)}&file=${encodeURIComponent(file)}&fallback=empty`;
+    }
+    return `api/texture/${encodeURIComponent(part)}/${encodeURIComponent(id)}/${encodeURIComponent(file)}.webp`;
 }
 
 const WSDB_TEXTURE_CACHE = new Map();
