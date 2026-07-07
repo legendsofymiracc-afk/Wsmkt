@@ -672,7 +672,16 @@ const WSDB_TEXTURES = {
     EARS:     ['ears',   'ears_front', {mirrorX: -10, normalX: 16, y: 6}]
 };
 
+function wsdbLocalTextureUrl(part, id, file) {
+    return `images/wsdb_textures/${encodeURIComponent(part)}/${encodeURIComponent(id)}/${encodeURIComponent(file)}.webp`;
+}
+
+function wsdbRemoteTextureUrl(part, id, file) {
+    return `https://wsdb.xyz/textures/${encodeURIComponent(part)}/${encodeURIComponent(id)}/${encodeURIComponent(file)}.webp`;
+}
+
 function wsdbTextureUrl(part, id, file) {
+    return wsdbLocalTextureUrl(part, id, file);
     // Dev local: proxy PHP mesma origem → Canvas tint funciona
     // Producao: direto do wsdb.xyz (crossOrigin=anonymous tenta CORS, fallback sem tint)
     const isLocal = /^(https?:\/\/)?(127\.0\.0\.1|localhost|file:)/i.test(window.location.origin || '') || window.location.protocol === 'file:';
@@ -684,21 +693,35 @@ function wsdbTextureUrl(part, id, file) {
 
 const WSDB_TEXTURE_CACHE = new Map();
 const WSDB_TINT_CACHE = new Map();
+const WSDB_MISSING_TEXTURES = new Set([
+    'cape/69/cloakD',
+    'helmet/1180/helmetD',
+    'hair/26/hairD',
+    'hair/154/hairD'
+]);
 // Flag global: true se o canvas estiver tainted (cross-origin sem CORS)
 let WSDB_CANVAS_TAINTED = false;
 
-function loadWsdbTexture(part, id, file) {
-    const cacheKey = `${part}/${id}/${file}`;
-    if (WSDB_TEXTURE_CACHE.has(cacheKey)) return WSDB_TEXTURE_CACHE.get(cacheKey);
-    const promise = new Promise(resolve => {
-        if (!id) { resolve(null); return; }
+function loadTextureImage(url, useCors = false) {
+    return new Promise(resolve => {
         const img = new Image();
-        // crossOrigin tenta habilitar CORS; se wsdb.xyz nao mandar header, canvas fica tainted
-        img.crossOrigin = 'anonymous';
+        if (useCors) img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null);
-        img.src = wsdbTextureUrl(part, id, file);
+        img.src = url;
     });
+}
+
+function loadWsdbTexture(part, id, file) {
+    const cacheKey = `${part}/${id}/${file}`;
+    if (WSDB_MISSING_TEXTURES.has(cacheKey)) return Promise.resolve(null);
+    if (WSDB_TEXTURE_CACHE.has(cacheKey)) return WSDB_TEXTURE_CACHE.get(cacheKey);
+    const promise = (async () => {
+        if (!id) return null;
+        const local = await loadTextureImage(wsdbLocalTextureUrl(part, id, file));
+        if (local) return local;
+        return loadTextureImage(wsdbRemoteTextureUrl(part, id, file), false);
+    })();
     WSDB_TEXTURE_CACHE.set(cacheKey, promise);
     return promise;
 }
@@ -711,7 +734,7 @@ function rgbToInt(r, g, b) { return r << 16 | g << 8 | b; }
 function imageToData(img) {
     const canvas = document.createElement('canvas');
     canvas.width = img.width; canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
     try {
@@ -788,7 +811,13 @@ function replaceSkinColors(ctx, skin) {
 
 function canvasToTrimmedDataUrl(canvas, padding = 2) {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data;
+    try {
+        data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    } catch (_) {
+        WSDB_CANVAS_TAINTED = true;
+        return '';
+    }
     let minX = canvas.width;
     let minY = canvas.height;
     let maxX = -1;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mercado-ws-v19-texture-direct';
+const CACHE_NAME = 'mercado-ws-v20-local-outfit-textures';
 const ASSETS = [
   '/', '/index.html',
   '/css/style.css', '/css/animations.css',
@@ -7,7 +7,8 @@ const ASSETS = [
   '/js/views/home.js', '/js/views/categories.js', '/js/views/items.js', '/js/views/admin.js', '/js/views/seller.js',
   '/images/favorito.png', '/images/cantoneira.png', '/images/fundo.png', '/images/wsdb_slot_frame.png',
   '/images/uploads/gold_coin.png', '/images/uploads/mercado.png', '/images/uploads/administrativo.png',
-  '/database/categories.tree.json', '/database/items.static.json', '/database/settings.public.json'
+  '/database/categories.tree.json', '/database/items.static.json', '/database/settings.public.json',
+  '/database/haircuts-0.json', '/database/haircuts-1.json'
 ];
 
 self.addEventListener('install', e => {

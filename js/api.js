@@ -146,7 +146,10 @@ async function fetchStaticJSON(endpoint, options = {}) {
     if (file === 'cart.php') return { items: [], count: 0, total_coins: 0 };
     if (file === 'reviews.php') return { media: 0, total: 0, reviews: [] };
     if (file === 'templates.php') return [];
-    if (file === 'haircuts.php') return { list: [] };
+    if (file === 'haircuts.php') {
+        const gender = params.get('gender') === '1' ? '1' : '0';
+        return cloneStaticPayload(await loadStaticJSON(`database/haircuts-${gender}.json`));
+    }
     if (file === 'sellers.php') return [];
     if (file === 'coupons.php') return [];
 
